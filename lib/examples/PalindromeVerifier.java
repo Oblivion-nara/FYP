@@ -1,5 +1,3 @@
-package main;
-
 import xyz.acygn.mokapot.NonCopiable;
 
 /**

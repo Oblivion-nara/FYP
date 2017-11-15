@@ -1,5 +1,3 @@
-package main;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -14,16 +12,16 @@ import xyz.acygn.mokapot.TCPCommunicationAddress;
 public class Demo {
 
     public static void main(String[] args) throws IOException {
-        // Start a communicator on this JVM listening on port 15239.
+        // Start a communicator on this JVM listening on port 15238.
         DistributedCommunicator communicator
                 = new DistributedCommunicator(
-                        TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239));
+                        TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238));
 
         communicator.startCommunication();
 
         // Configure the address of the remote communicator.
         CommunicationAddress remoteAddress
-                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
+                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239);
 
         // Create a list on the remote machine.
         List<String> remoteList = DistributedCommunicator.getCommunicator()
