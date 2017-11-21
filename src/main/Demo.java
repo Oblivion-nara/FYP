@@ -24,11 +24,11 @@ public class Demo {
         // Configure the address of the remote communicator.
         CommunicationAddress remoteAddress
                 = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
+        System.out.println("point 1");
 
         // Create a list on the remote machine.
-        List<String> remoteList = DistributedCommunicator.getCommunicator()
-                .runRemotely(() -> new ArrayList<>(), remoteAddress);
-
+        List<String> remoteList = DistributedCommunicator.getCommunicator().runRemotely(() -> new ArrayList<>(), remoteAddress);
+System.out.println("point 2");
         // Add an element to the remote list.
         remoteList.add("Some string");
 
