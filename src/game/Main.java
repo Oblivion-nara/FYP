@@ -20,14 +20,18 @@ public class Main extends JFrame {
 	public static InputHandler input;
 	public static Random random;
 	public static int width, height;
-//	private static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[1];
+	private static GraphicsDevice device;
 
 	private Graphics g;
 	private Image offImage;
-
-//	private Game game;
+	private Game game;
 
 	public static void main(String[] args) {
+		try {
+			device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[1];
+		} catch (Exception e) {
+			System.err.println("no second display");
+		}
 		new Main().run();
 	}
 
@@ -44,8 +48,10 @@ public class Main extends JFrame {
 
 		this.setTitle("Racing");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-//		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//		this.setUndecorated(true);
+		this.setSize(1000, 1000);
+		this.setLocationRelativeTo(null);
+		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// this.setUndecorated(true);
 		this.setVisible(true);
 
 		width = this.getWidth();
@@ -54,18 +60,7 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		g = this.getGraphics();
 
-		int tiles = 100;
-		int size = 0;
-		Point start;
-		if (width > height) {
-			size = (int) (height * 19f / 20f);
-		} else {
-			size = (int) (width * 19f / 20f);
-		}
-
-		start = new Point((width - size) / 2, (height - size) / 2);
-
-//		game = new Game(tiles, start, size);
+		game = new Game(1);
 	}
 
 	public void loop() {
@@ -93,17 +88,19 @@ public class Main extends JFrame {
 	}
 
 	private void update() {
+		width = this.getWidth();
+		height = this.getHeight();
 
 		if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
 			running = false;
 			return;
 		}
-		if(input.isKeyDown(KeyEvent.VK_R)){
-//			game.newGame();
+		if (input.isKeyDown(KeyEvent.VK_R)) {
+			// game.newGame();
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 
-//		game.update();
+		game.update();
 
 	}
 
@@ -112,7 +109,12 @@ public class Main extends JFrame {
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-//		game.draw(offg);
+		game.draw(offg);
+		Point mouse = input.getMousePositionRelativeToComponent();
+		if (mouse != null) {
+			offg.setColor(Color.blue);
+			offg.fillRect(mouse.x, mouse.y, 2, 2);
+		}
 		g.drawImage(offImage, 0, 0, width, height, null);
 
 	}
