@@ -25,7 +25,7 @@ public class Main extends JFrame {
 	private Graphics g;
 	private Image offImage;
 
-	private Game game;
+//	private Game game;
 
 	public static void main(String[] args) {
 		new Main().run();
@@ -42,11 +42,10 @@ public class Main extends JFrame {
 		random = new Random();
 		FPS = 60;
 
-//		device.setFullScreenWindow(this);
-		this.setTitle("Snake");
+		this.setTitle("Racing");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setUndecorated(true);
+//		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//		this.setUndecorated(true);
 		this.setVisible(true);
 
 		width = this.getWidth();
@@ -66,7 +65,7 @@ public class Main extends JFrame {
 
 		start = new Point((width - size) / 2, (height - size) / 2);
 
-		game = new Game(tiles, start, size);
+//		game = new Game(tiles, start, size);
 	}
 
 	public void loop() {
@@ -100,11 +99,11 @@ public class Main extends JFrame {
 			return;
 		}
 		if(input.isKeyDown(KeyEvent.VK_R)){
-			game.newGame();
+//			game.newGame();
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 
-		game.update();
+//		game.update();
 
 	}
 
@@ -113,7 +112,7 @@ public class Main extends JFrame {
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-		game.draw(offg);
+//		game.draw(offg);
 		g.drawImage(offImage, 0, 0, width, height, null);
 
 	}

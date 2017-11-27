@@ -1,2 +1,0 @@
-# FYP
-final year project

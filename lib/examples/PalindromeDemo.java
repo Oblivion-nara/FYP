@@ -1,5 +1,3 @@
-package main;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import xyz.acygn.mokapot.CommunicationAddress;
@@ -14,12 +12,12 @@ public class PalindromeDemo {
     public static void main(String[] args) throws IOException {
         DistributedCommunicator communicator
                 = new DistributedCommunicator(
-                TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239));
+                TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238));
 
         communicator.startCommunication();
 
         CommunicationAddress remoteAddress
-                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
+                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239);
 
         final PalindromeVerifier palindromeVerifier = DistributedCommunicator.getCommunicator()
                 .runRemotely(PalindromeVerifier::new, remoteAddress);
