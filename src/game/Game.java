@@ -27,7 +27,7 @@ public class Game {
 		this.tiles = tiles;
 		this.start = start;
 		this.size = size;
-		snakes = 1;
+		snakes = 20;
 		isAI = false;
 		spacing = size / tiles;
 		highScore = 0;

@@ -55,7 +55,7 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		g = this.getGraphics();
 
-		int tiles = 16;
+		int tiles = 100;
 		int size = 0;
 		Point start;
 		if (width > height) {
