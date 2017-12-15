@@ -1,11 +1,13 @@
 package game;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
@@ -25,6 +27,7 @@ public class Main extends JFrame {
 	private Graphics g;
 	private Image offImage;
 	private Game game;
+	private Dimension maxSize;
 
 	public static void main(String[] args) {
 		try {
@@ -49,6 +52,7 @@ public class Main extends JFrame {
 		this.setTitle("Racing");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(1000, 1000);
+		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		// this.setUndecorated(true);
@@ -60,7 +64,7 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		g = this.getGraphics();
 
-		game = new Game(1);
+		game = new Game(2);
 	}
 
 	public void loop() {
@@ -110,11 +114,13 @@ public class Main extends JFrame {
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
 		game.draw(offg);
+
 		Point mouse = input.getMousePositionRelativeToComponent();
 		if (mouse != null) {
 			offg.setColor(Color.blue);
 			offg.fillRect(mouse.x, mouse.y, 2, 2);
 		}
+
 		g.drawImage(offImage, 0, 0, width, height, null);
 
 	}

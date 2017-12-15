@@ -27,7 +27,7 @@ public class Track {
 
 	private void initTrack() {
 
-		Point current = new Point(Main.width / 5, Main.height / 2);
+		Point current = new Point(Main.width / 2, Main.height / 2);
 		float direction = 0; // 0* is right -> going clockwise 0-2pi
 		segments.add(new Point(current));
 
