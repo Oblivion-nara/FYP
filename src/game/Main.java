@@ -24,6 +24,7 @@ public class Main extends JFrame {
 	public static int width, height;
 	private static GraphicsDevice device;
 
+	private float zoom;
 	private Graphics g;
 	private Image offImage;
 	private Game game;
@@ -48,6 +49,7 @@ public class Main extends JFrame {
 		input = new InputHandler(this);
 		random = new Random();
 		FPS = 60;
+		zoom = 0f;
 
 		this.setTitle("Racing");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -103,6 +105,17 @@ public class Main extends JFrame {
 			// game.newGame();
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
+		double wheel = input.getMouseWheelMovement();
+		if(wheel != 0){
+			zoom -= wheel/10f;
+			if(zoom < 0){
+				zoom = 0;
+			}else if(zoom > 2){
+				zoom = 2;
+			}
+			input.setZoom(zoom);
+			input.stopMouseWheel();
+		}
 
 		game.update();
 
@@ -115,13 +128,13 @@ public class Main extends JFrame {
 		offg.fillRect(0, 0, width, height);
 		game.draw(offg);
 
-		Point mouse = input.getMousePositionRelativeToComponent();
+		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
 			offg.setColor(Color.blue);
 			offg.fillRect(mouse.x, mouse.y, 2, 2);
 		}
 
-		g.drawImage(offImage, 0, 0, width, height, null);
+		g.drawImage(offImage, -(int)(zoom*width/2f), -(int)(zoom*height/2f), (int)((1+zoom)*width), (int)((1+zoom)*width), null);
 
 	}
 

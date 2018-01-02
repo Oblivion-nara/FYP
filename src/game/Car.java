@@ -40,7 +40,7 @@ public class Car {
 		boolean ret = false;
 
 		if (myTurn) {
-			mouse = Main.input.getMousePositionRelativeToComponent();
+			mouse = Main.input.getMouseZoomed();
 			if (mouse != null) {
 				mouse.move(mouse.x+offset.x, mouse.y+offset.y);
 				if (mouse.distance(location.getX() + velocity.getX(), location.getY() + velocity.getY()) < movement) {

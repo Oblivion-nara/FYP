@@ -36,9 +36,7 @@ public class Game {
 			players.get(playersTurn).go();
 		}
 		offset = new Point((Point)players.get(playersTurn).getLocation());
-		offset.move(offset.x-Main.width/2, offset.y-Main.height/2);
-
-		System.out.println("Game.update(), "+offset);
+		offset.move(offset.x-track.getStart().x, offset.y-track.getStart().y);
 		/*
 		 * testing track generation if(Main.input.isKeyDown(KeyEvent.VK_W)){
 		 * seed++; track = new Track(seed);
