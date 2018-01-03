@@ -46,6 +46,15 @@ public class Track {
 	public Point getStart() {
 		return segments.get(0);
 	}
+	
+	public boolean wins(Point2D loc){
+		
+		if(segments.get(maxSegments-1).distance(loc) < strokeSize/2){
+			return true;
+		}
+		return false;
+		
+	}
 
 	public boolean onTrack(Point loc) {
 

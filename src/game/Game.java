@@ -27,34 +27,25 @@ public class Game {
 		this.players.get(0).go();
 		offset = new Point(0, 0);
 	}
-	public void next(){
-
-		track = new Track(++seed);
-		Point start = track.getStart();
-		int size = players.size();
-		this.players.removeAll(players);
-		for (int i = 0; i < size; i++) {
-			this.players.add(new Car(start,
-					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255))));
-		}
-		this.players.get(0).go();
-		offset = new Point(0, 0);
-	}
 
 	public void update() {
 
 		boolean next = players.get(playersTurn).update(offset);
 		if (next) {
+			if(track.wins(players.get(playersTurn).getLocation())){
+				
+			}
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);
 		}
-		/*
-		 * testing track generation if(Main.input.isKeyDown(KeyEvent.VK_W)){
-		 * seed++; track = new Track(seed);
-		 * Main.input.artificialKeyReleased(KeyEvent.VK_W); }
-		 */
+		
+		// testing track generation
+		// if(Main.input.isKeyDown(KeyEvent.VK_W)){
+		// seed++; track = new Track(seed);
+		// Main.input.artificialKeyReleased(KeyEvent.VK_W); }
+		
 	}
 
 	public void draw(Graphics g) {
