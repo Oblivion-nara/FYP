@@ -16,6 +16,7 @@ public class Track {
 	private final int maxSegments = 20;
 	private final float seglength = 50;
 	private ArrayList<Point> segments;
+	private int strokeSize = 20;
 
 	public Track(long seed) {
 
@@ -28,11 +29,11 @@ public class Track {
 	private void initTrack() {
 
 		Point current = new Point(Main.width / 2, Main.height / 2);
-		float direction = 0; // 0* is right -> going clockwise 0-2pi
+		float angle,direction = (float) (random.nextFloat() * Math.PI * 2); // 0* is right -> going clockwise 0-2pi
 		segments.add(new Point(current));
 
 		for (int i = 1; i < maxSegments; i++) {
-			float angle = (float) (random.nextFloat() * Math.PI - Math.PI / 2);
+			angle = (float) (random.nextFloat() * Math.PI - Math.PI / 2);
 			direction += angle;
 			direction %= (Math.PI * 2);
 			current.translate((int) (seglength * Math.cos(direction)), (int) (seglength * Math.sin(direction)));
@@ -46,15 +47,51 @@ public class Track {
 		return segments.get(0);
 	}
 
-	public void update() {
+	public boolean onTrack(Point loc) {
 
+		for (int i = 0; i < maxSegments - 1; i++) {
+
+			if (segments.get(i).distance(loc) < seglength + strokeSize/2
+					&& segments.get(i + 1).distance(loc) < seglength + strokeSize/2
+					&& onLine(segments.get(i), segments.get(i + 1), loc)) {
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
+
+	private boolean onLine(Point p1, Point p2, Point loc) {
+
+		// y = mx + c => ax + by + c = 0
+		// if m = a/b
+		// mx - y + c = 0
+		float m1, m2, c, distance;
+
+		m1 = p1.y - p2.y;
+		m2 = p1.x - p2.x;
+		if (m2 != 0) {
+			c = p1.y - m1 / m2 * p1.x;
+
+			distance = (float) (Math.abs((m1 * loc.x - m2 * loc.y + m2 * c))
+					/ Math.sqrt(Math.pow(m1, 2) + Math.pow(m2, 2)));
+		} else {
+			distance = Math.abs(loc.x - p1.x);
+		}
+
+		if (distance < strokeSize/2) {
+			return true;
+		}
+		return false;
 	}
 
 	public void draw(Graphics g) {
 
 		Graphics2D g2 = (Graphics2D) g;
 		Stroke defaultStroke = g2.getStroke();
-		Stroke stroke = new BasicStroke(20);
+		Stroke stroke = new BasicStroke(strokeSize);
 		g2.setStroke(stroke);
 
 		g2.setColor(Color.lightGray);

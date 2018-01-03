@@ -102,8 +102,9 @@ public class Main extends JFrame {
 			return;
 		}
 		if (input.isKeyDown(KeyEvent.VK_R)) {
-			// game.newGame();
+//			 game.newGame();
 			input.artificialKeyReleased(KeyEvent.VK_R);
+			game.next();
 		}
 		double wheel = input.getMouseWheelMovement();
 		if(wheel != 0){
