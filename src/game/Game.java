@@ -1,6 +1,8 @@
 package game;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -12,11 +14,13 @@ public class Game {
 	private ArrayList<Car> players;
 	private Point offset;
 	private Track track;
+	private boolean gameWon;
 	private long seed = 1000l;
 	private int playersTurn;
 
 	public Game(int players) {
 
+		gameWon = false;
 		track = new Track(seed);
 		Point start = track.getStart();
 		this.players = new ArrayList<>();
@@ -29,11 +33,15 @@ public class Game {
 	}
 
 	public void update() {
+		if(gameWon){
+			return;
+		}
 
 		boolean next = players.get(playersTurn).update(offset);
 		if (next) {
 			if(track.wins(players.get(playersTurn).getLocation())){
-				
+				gameWon = true;
+				return;
 			}
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
@@ -66,6 +74,14 @@ public class Game {
 //		}
 		
 		g.translate(offset.x, offset.y);
+		if(gameWon){
+			Font font = new Font("Verdana",Font.BOLD,40);
+			g.setFont(font);
+			FontMetrics met = g.getFontMetrics();
+			String winner = "The winner is: Player "+(playersTurn+1);
+			int width = met.stringWidth(winner);
+			g.drawString(winner, (Main.width-width )/2, 300);
+		}
 	}
 
 }
