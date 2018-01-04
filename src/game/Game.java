@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Game {
@@ -39,7 +37,9 @@ public class Game {
 
 		boolean next = players.get(playersTurn).update(offset);
 		if (next) {
-			if(track.wins(players.get(playersTurn).getLocation())){
+			if(!players.get(playersTurn).onTrack() || !track.onTrack((Point)players.get(playersTurn).getLocation())){
+				players.get(playersTurn).offTrack();
+			}else if(track.wins(players.get(playersTurn).getLocation())){
 				gameWon = true;
 				return;
 			}

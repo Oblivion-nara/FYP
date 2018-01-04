@@ -8,18 +8,20 @@ import java.awt.geom.Point2D;
 
 public class Car {
 
-	private Point2D location, velocity;
+	private Point2D location, velocity, trackReturn;
 	private Point mouse;
 	private float thrust, breakForce, steering;
 	private int movement = 25;
-	private boolean myTurn, drawMovement;
+	private boolean myTurn, drawMovement, onTrack;
 	private Color color;
 
 	public Car(Point start, Color color) {
 		location = new Point(start);
+		trackReturn = new Point(start);
 		this.color = color;
 		myTurn = false;
 		drawMovement = false;
+		onTrack = true;
 		velocity = new Point2D.Double(0, 0);
 	}
 
@@ -29,6 +31,14 @@ public class Car {
 
 	public Point2D getLocation() {
 		return location;
+	}
+
+	public boolean onTrack() {
+		return onTrack;
+	}
+
+	public void offTrack() {
+		onTrack = false;
 	}
 
 	public void go() {
@@ -42,10 +52,13 @@ public class Car {
 		if (myTurn) {
 			mouse = Main.input.getMouseZoomed();
 			if (mouse != null) {
-				mouse.move(mouse.x+offset.x, mouse.y+offset.y);
+				mouse.move(mouse.x + offset.x, mouse.y + offset.y);
 				if (mouse.distance(location.getX() + velocity.getX(), location.getY() + velocity.getY()) < movement) {
 					drawMovement = true;
 					if (Main.input.isMouseDown(1)) {
+						if (onTrack) {
+							trackReturn = (Point2D) location.clone();
+						}
 						velocity.setLocation(mouse.getX() - location.getX(), mouse.getY() - location.getY());
 						location.setLocation(mouse.x, mouse.y);
 						ret = true;
@@ -54,6 +67,9 @@ public class Car {
 					Main.input.artificialMouseReleased(1);
 				} else {
 					drawMovement = false;
+				}
+				if (trackReturn.distance(location) < movement / 2) {
+					onTrack = true;
 				}
 			}
 		}
@@ -67,6 +83,8 @@ public class Car {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(color);
 		g2.fillRect((int) location.getX() - 5, (int) location.getY() - 5, 10, 10);
+		g2.setColor(Color.BLACK);
+		g2.fillRect((int) trackReturn.getX() - 5, (int) trackReturn.getY() - 5, 10, 10);
 
 		if (myTurn) {
 			g2.setColor(Color.red);
@@ -77,6 +95,10 @@ public class Car {
 			if (drawMovement) {
 				g2.setColor(Color.WHITE);
 				g2.drawLine((int) location.getX(), (int) location.getY(), mouse.x, mouse.y);
+			}
+			if (!onTrack) {
+				g2.setColor(Color.red);
+				g2.fillRect(-100, -100, 50, 50);
 			}
 		}
 

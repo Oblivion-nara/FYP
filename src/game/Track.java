@@ -29,7 +29,13 @@ public class Track {
 	private void initTrack() {
 
 		Point current = new Point(Main.width / 2, Main.height / 2);
-		float angle,direction = (float) (random.nextFloat() * Math.PI * 2); // 0* is right -> going clockwise 0-2pi
+		float angle, direction = (float) (random.nextFloat() * Math.PI * 2); // 0*
+																				// is
+																				// right
+																				// ->
+																				// going
+																				// clockwise
+																				// 0-2pi
 		segments.add(new Point(current));
 
 		for (int i = 1; i < maxSegments; i++) {
@@ -46,23 +52,23 @@ public class Track {
 	public Point getStart() {
 		return segments.get(0);
 	}
-	
-	public boolean wins(Point2D loc){
-		
-		if(segments.get(maxSegments-1).distance(loc) < strokeSize/2){
+
+	public boolean wins(Point2D loc) {
+
+		if (segments.get(maxSegments - 1).distance(loc) < strokeSize / 2) {
 			return true;
 		}
 		return false;
-		
+
 	}
 
-	public boolean onTrack(Point loc) {
+	public boolean onTrack(Point location) {
 
 		for (int i = 0; i < maxSegments - 1; i++) {
 
-			if (segments.get(i).distance(loc) < seglength + strokeSize/2
-					&& segments.get(i + 1).distance(loc) < seglength + strokeSize/2
-					&& onLine(segments.get(i), segments.get(i + 1), loc)) {
+			if (segments.get(i).distance(location) < seglength + strokeSize / 2
+					&& segments.get(i + 1).distance(location) < seglength + strokeSize / 2
+					&& onLine(segments.get(i), segments.get(i + 1), location)) {
 				return true;
 			}
 
@@ -81,16 +87,19 @@ public class Track {
 
 		m1 = p1.y - p2.y;
 		m2 = p1.x - p2.x;
-		if (m2 != 0) {
+		
+		if (m1 == 0) {
+			distance = (float) Math.abs(loc.getY() - p1.y);
+		} else if (m2 == 0) {
+			distance = (float) Math.abs(loc.getX() - p1.x);
+		} else {
 			c = p1.y - m1 / m2 * p1.x;
 
-			distance = (float) (Math.abs((m1 * loc.x - m2 * loc.y + m2 * c))
+			distance = (float) (Math.abs((m1 * loc.getX() - m2 * loc.getY() + m2 * c))
 					/ Math.sqrt(Math.pow(m1, 2) + Math.pow(m2, 2)));
-		} else {
-			distance = Math.abs(loc.x - p1.x);
 		}
 
-		if (distance < strokeSize/2) {
+		if (distance < strokeSize / 2) {
 			return true;
 		}
 		return false;
