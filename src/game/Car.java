@@ -11,7 +11,7 @@ public class Car {
 	private Point2D location, velocity, trackReturn;
 	private Point mouse;
 	private float thrust, breakForce, steering;
-	private int movement = 25;
+	private int movement = 40;
 	private boolean myTurn, drawMovement, onTrack;
 	private Color color;
 
@@ -32,17 +32,25 @@ public class Car {
 	public Point2D getLocation() {
 		return location;
 	}
+	
+	public Point2D getTrackReturn(){
+		return trackReturn;
+	}
 
 	public boolean onTrack() {
 		return onTrack;
 	}
 
-	public void offTrack() {
-		onTrack = false;
+	public void setTrack(boolean onTrack) {
+		this.onTrack = onTrack;
 	}
 
 	public void go() {
 		myTurn = true;
+	}
+	
+	public void setTrackReturn(Point trackReturn){
+		this.trackReturn = trackReturn;
 	}
 
 	public boolean update(Point offset) {
@@ -68,9 +76,6 @@ public class Car {
 				} else {
 					drawMovement = false;
 				}
-				if (trackReturn.distance(location) < movement / 2) {
-					onTrack = true;
-				}
 			}
 		}
 
@@ -95,10 +100,6 @@ public class Car {
 			if (drawMovement) {
 				g2.setColor(Color.WHITE);
 				g2.drawLine((int) location.getX(), (int) location.getY(), mouse.x, mouse.y);
-			}
-			if (!onTrack) {
-				g2.setColor(Color.red);
-				g2.fillRect(-100, -100, 50, 50);
 			}
 		}
 

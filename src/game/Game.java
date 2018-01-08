@@ -5,14 +5,17 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Game {
 
 	private ArrayList<Car> players;
-	private Point offset;
+	private Point offset, prevOffset;
 	private Track track;
 	private boolean gameWon;
+	private float interpolation = 1f;
 	private long seed = 1000l;
 	private int playersTurn;
 
@@ -27,60 +30,98 @@ public class Game {
 					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255))));
 		}
 		this.players.get(0).go();
-		offset = new Point(0, 0);
+		offset = prevOffset = new Point(0, 0);
+	}
+
+	private Point getPointOnTrack(int iterations, Point loc, Point ret) {
+
+		Point mid = new Point((int) (loc.getX() + ret.getX()) / 2, (int) (loc.getY() + ret.getY()) / 2);
+
+		if (track.onTrack(mid)) {
+			if (iterations < 0) {
+				return mid;
+			}
+			return getPointOnTrack(--iterations, loc, mid);
+		} else {
+			if (iterations < 0) {
+				return ret;
+			}
+			return getPointOnTrack(--iterations, mid, ret);
+		}
+
 	}
 
 	public void update() {
-		if(gameWon){
+		if (gameWon) {
 			return;
 		}
 
 		boolean next = players.get(playersTurn).update(offset);
 		if (next) {
-			if(!players.get(playersTurn).onTrack() || !track.onTrack((Point)players.get(playersTurn).getLocation())){
-				players.get(playersTurn).offTrack();
-			}else if(track.wins(players.get(playersTurn).getLocation())){
+			Car player = players.get(playersTurn);
+			Point loc = (Point) player.getLocation();
+			boolean onTrack = player.onTrack();
+
+			if (onTrack && !track.onTrack(loc)) {
+				player.setTrackReturn(track.getNearestTrackPoint(getPointOnTrack(10, loc, (Point) player.getTrackReturn())));
+				player.setTrack(false);
+
+			} else if (!onTrack && track.inRange(loc, (Point) player.getTrackReturn())) {
+				player.setTrack(true);
+
+			} else if (onTrack && track.wins(loc)) {
+
 				gameWon = true;
 				return;
 			}
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
+			prevOffset = offset;
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);
+			interpolation = 0f;
 		}
-		
+
 		// testing track generation
-		// if(Main.input.isKeyDown(KeyEvent.VK_W)){
-		// seed++; track = new Track(seed);
-		// Main.input.artificialKeyReleased(KeyEvent.VK_W); }
-		
+//		if (Main.input.isKeyDown(KeyEvent.VK_W)) {
+//			seed++;
+//			track = new Track(seed);
+//			Main.input.artificialKeyReleased(KeyEvent.VK_W);
+//		}
+		if (interpolation < 1) {
+			interpolation += 0.1f;
+		}
+
 	}
 
 	public void draw(Graphics g) {
-		g.translate(-offset.x, -offset.y);
+
+		g.translate(-(int) (interpolation * offset.x + (1 - interpolation) * prevOffset.x),
+				-(int) (interpolation * offset.y + (1 - interpolation) * prevOffset.y));
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track
-//		for (int x = 1; x < Main.width; x +=5) {
-//			for (int y = 1; y < Main.height; y +=5) {
-//				if (track.onTrack(new Point(x, y))) {
-//					g.setColor(Color.green);
-//					g.drawRect(x, y, 1, 1);
-//				} else {
-//					g.setColor(Color.red);
-//					g.drawRect(x, y, 1, 1);
-//				}
-//			}
-//		}
-		
-		g.translate(offset.x, offset.y);
-		if(gameWon){
-			Font font = new Font("Verdana",Font.BOLD,40);
+		// for (int x = 1; x < Main.width; x +=5) {
+		// for (int y = 1; y < Main.height; y +=5) {
+		// if (track.onTrack(new Point(x, y))) {
+		// g.setColor(Color.green);
+		// g.drawRect(x, y, 1, 1);
+		// } else {
+		// g.setColor(Color.red);
+		// g.drawRect(x, y, 1, 1);
+		// }
+		// }
+		// }
+
+		g.translate((int) (interpolation * offset.x + (1 - interpolation) * prevOffset.x),
+				(int) (interpolation * offset.y + (1 - interpolation) * prevOffset.y));
+		if (gameWon) {
+			Font font = new Font("Verdana", Font.BOLD, 40);
 			g.setFont(font);
 			FontMetrics met = g.getFontMetrics();
-			String winner = "The winner is: Player "+(playersTurn+1);
+			String winner = "The winner is: Player " + (playersTurn + 1);
 			int width = met.stringWidth(winner);
-			g.drawString(winner, (Main.width-width )/2, 300);
+			g.drawString(winner, (Main.width - width) / 2, 300);
 		}
 	}
 

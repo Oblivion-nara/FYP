@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,7 +24,6 @@ public class Track {
 		random = new Random(seed);
 		segments = new ArrayList<>();
 		initTrack();
-
 	}
 
 	private void initTrack() {
@@ -42,10 +42,28 @@ public class Track {
 			angle = (float) (random.nextFloat() * Math.PI - Math.PI / 2);
 			direction += angle;
 			direction %= (Math.PI * 2);
-			current.translate((int) (seglength * Math.cos(direction)), (int) (seglength * Math.sin(direction)));
+			Point temp = new Point(current);
+			temp.translate((int) (seglength * Math.cos(direction)), (int) (seglength * Math.sin(direction)));
+			if (basicIntersects(i - 1, current, temp)) {
+				i--;
+				continue;
+			}
+			current = temp;
 			segments.add(new Point(current));
 			System.out.println(current);
+
 		}
+
+	}
+
+	public boolean basicIntersects(int currentMax, Point start, Point end) {
+
+		for (int i = 0; i < currentMax; i++) {
+			if(segments.get(i).distance(end) < seglength){
+				return true;
+			}
+		}
+		return false;
 
 	}
 
@@ -60,6 +78,25 @@ public class Track {
 		}
 		return false;
 
+	}
+	
+	public boolean inRange(Point loc, Point returnLoc){
+		return (loc.distance(returnLoc) <= strokeSize/2);
+	}
+	
+	public Point getNearestTrackPoint(Point loc){
+		
+		for (int i = 0; i < maxSegments - 1; i++) {
+
+			if (segments.get(i).distance(loc) < seglength + strokeSize / 2
+					&& segments.get(i + 1).distance(loc) < seglength + strokeSize / 2
+					&& onLine(segments.get(i), segments.get(i + 1), loc)) {
+				
+			}
+
+		}
+		return null;
+		
 	}
 
 	public boolean onTrack(Point location) {
@@ -87,7 +124,7 @@ public class Track {
 
 		m1 = p1.y - p2.y;
 		m2 = p1.x - p2.x;
-		
+
 		if (m1 == 0) {
 			distance = (float) Math.abs(loc.getY() - p1.y);
 		} else if (m2 == 0) {
