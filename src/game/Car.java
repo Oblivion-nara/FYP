@@ -10,12 +10,11 @@ import java.awt.geom.Point2D;
 
 public class Car {
 
-	private Point2D location, velocity, trackReturn;
 	private Point mouse;
-	private float thrust, breakForce, steering;
-	private int movement = 40, trackSize;
-	private boolean myTurn, drawMovement, onTrack;
 	private Color color;
+	protected boolean myTurn, drawMovement, onTrack;
+	protected Point2D location, velocity, trackReturn;
+	protected int movement = 40, trackSize;
 
 	public Car(Point start, Color color, int trackSize) {
 		location = new Point(start);
