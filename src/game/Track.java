@@ -55,11 +55,15 @@ public class Track {
 		}
 
 	}
+	
+	public int getTrackWidth(){
+		return strokeSize;
+	}
 
 	public boolean basicIntersects(int currentMax, Point start, Point end) {
 
 		for (int i = 0; i < currentMax; i++) {
-			if(segments.get(i).distance(end) < seglength){
+			if (segments.get(i).distance(end) < seglength) {
 				return true;
 			}
 		}
@@ -79,24 +83,29 @@ public class Track {
 		return false;
 
 	}
-	
-	public boolean inRange(Point loc, Point returnLoc){
-		return (loc.distance(returnLoc) <= strokeSize/2);
-	}
-	
-	public Point getNearestTrackPoint(Point loc){
-		
-		for (int i = 0; i < maxSegments - 1; i++) {
 
-			if (segments.get(i).distance(loc) < seglength + strokeSize / 2
-					&& segments.get(i + 1).distance(loc) < seglength + strokeSize / 2
-					&& onLine(segments.get(i), segments.get(i + 1), loc)) {
-				
+	public boolean inRange(Point loc, Point returnLoc) {
+		return (loc.distance(returnLoc) <= strokeSize / 2);
+	}
+
+	public Point getNearestTrackPoint(Point loc) {
+
+		Point ret = null;
+		for (int i = 0; i < maxSegments - 1; i++) {
+			Point seg = segments.get(i);
+			Point next = segments.get(i + 1);
+			if (seg.distance(loc) < seglength + strokeSize / 2 && next.distance(loc) < seglength + strokeSize / 2) {
+				double dist = Math.sqrt(Math.pow(seg.distance(loc), 2) + Math.pow(getPerpDistance(seg, next, loc), 2));
+				double factor = dist / seglength;
+				ret = new Point((int) ((1 - factor) * seg.getX() + factor * next.getX()),
+						(int) ((1 - factor) * seg.getY() + factor * next.getY()));
+
+				return ret;
 			}
 
 		}
-		return null;
-		
+		return ret;
+
 	}
 
 	public boolean onTrack(Point location) {
@@ -115,28 +124,30 @@ public class Track {
 
 	}
 
-	private boolean onLine(Point p1, Point p2, Point loc) {
+	private float getPerpDistance(Point from, Point to, Point loc) {
 
 		// y = mx + c => ax + by + c = 0
 		// if m = a/b
 		// mx - y + c = 0
-		float m1, m2, c, distance;
+		float m1, m2, c;
 
-		m1 = p1.y - p2.y;
-		m2 = p1.x - p2.x;
+		m1 = from.y - to.y;
+		m2 = from.x - to.x;
 
 		if (m1 == 0) {
-			distance = (float) Math.abs(loc.getY() - p1.y);
+			return (float) Math.abs(loc.getY() - from.y);
 		} else if (m2 == 0) {
-			distance = (float) Math.abs(loc.getX() - p1.x);
+			return (float) Math.abs(loc.getX() - from.x);
 		} else {
-			c = p1.y - m1 / m2 * p1.x;
+			c = from.y - m1 / m2 * from.x;
 
-			distance = (float) (Math.abs((m1 * loc.getX() - m2 * loc.getY() + m2 * c))
+			return (float) (Math.abs((m1 * loc.getX() - m2 * loc.getY() + m2 * c))
 					/ Math.sqrt(Math.pow(m1, 2) + Math.pow(m2, 2)));
 		}
+	}
 
-		if (distance < strokeSize / 2) {
+	private boolean onLine(Point p1, Point p2, Point loc) {
+		if (getPerpDistance(p1, p2, loc) < strokeSize / 2) {
 			return true;
 		}
 		return false;

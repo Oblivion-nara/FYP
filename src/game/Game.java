@@ -27,12 +27,13 @@ public class Game {
 		this.players = new ArrayList<>();
 		for (int i = 0; i < players; i++) {
 			this.players.add(new Car(start,
-					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255))));
+					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)),track.getTrackWidth()));
 		}
 		this.players.get(0).go();
 		offset = prevOffset = new Point(0, 0);
 	}
 
+	//does a binary search to find the edge where the car left the track
 	private Point getPointOnTrack(int iterations, Point loc, Point ret) {
 
 		Point mid = new Point((int) (loc.getX() + ret.getX()) / 2, (int) (loc.getY() + ret.getY()) / 2);
@@ -101,17 +102,18 @@ public class Game {
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track
-		// for (int x = 1; x < Main.width; x +=5) {
-		// for (int y = 1; y < Main.height; y +=5) {
-		// if (track.onTrack(new Point(x, y))) {
-		// g.setColor(Color.green);
-		// g.drawRect(x, y, 1, 1);
-		// } else {
-		// g.setColor(Color.red);
-		// g.drawRect(x, y, 1, 1);
-		// }
-		// }
-		// }
+		// for testing various track methods
+//		for (int x = 1; x < Main.width; x += 5) {
+//			for (int y = 1; y < Main.height; y += 5) {
+//				if (track.inRange(new Point(x, y),(Point) players.get(playersTurn).getTrackReturn())) {
+//					g.setColor(Color.green);
+//					g.drawRect(x, y, 1, 1);
+//				} else {
+//					g.setColor(Color.red);
+//					g.drawRect(x, y, 1, 1);
+//				}
+//			}
+//		}
 
 		g.translate((int) (interpolation * offset.x + (1 - interpolation) * prevOffset.x),
 				(int) (interpolation * offset.y + (1 - interpolation) * prevOffset.y));

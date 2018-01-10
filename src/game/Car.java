@@ -1,6 +1,8 @@
 package game;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -11,14 +13,15 @@ public class Car {
 	private Point2D location, velocity, trackReturn;
 	private Point mouse;
 	private float thrust, breakForce, steering;
-	private int movement = 40;
+	private int movement = 40, trackSize;
 	private boolean myTurn, drawMovement, onTrack;
 	private Color color;
 
-	public Car(Point start, Color color) {
+	public Car(Point start, Color color, int trackSize) {
 		location = new Point(start);
 		trackReturn = new Point(start);
 		this.color = color;
+		this.trackSize = trackSize;
 		myTurn = false;
 		drawMovement = false;
 		onTrack = true;
@@ -32,8 +35,8 @@ public class Car {
 	public Point2D getLocation() {
 		return location;
 	}
-	
-	public Point2D getTrackReturn(){
+
+	public Point2D getTrackReturn() {
 		return trackReturn;
 	}
 
@@ -48,8 +51,8 @@ public class Car {
 	public void go() {
 		myTurn = true;
 	}
-	
-	public void setTrackReturn(Point trackReturn){
+
+	public void setTrackReturn(Point trackReturn) {
 		this.trackReturn = trackReturn;
 	}
 
@@ -86,10 +89,18 @@ public class Car {
 	public void draw(Graphics g) {
 
 		Graphics2D g2 = (Graphics2D) g;
+		if (myTurn && !onTrack) {
+			g2.setColor(Color.BLACK);
+			Font font = new Font("Verdana", Font.BOLD, 40);
+			g.setFont(font);
+			FontMetrics met = g.getFontMetrics();
+			String text = "Return to Track";
+			int width = met.stringWidth(text);
+			g.drawString(text, (Main.width - width) / 2, Main.height / 5);
+			g2.fillOval((int) trackReturn.getX() - trackSize/2, (int) trackReturn.getY() - trackSize/2, trackSize, trackSize);
+		}
 		g2.setColor(color);
 		g2.fillRect((int) location.getX() - 5, (int) location.getY() - 5, 10, 10);
-		g2.setColor(Color.BLACK);
-		g2.fillRect((int) trackReturn.getX() - 5, (int) trackReturn.getY() - 5, 10, 10);
 
 		if (myTurn) {
 			g2.setColor(Color.red);
