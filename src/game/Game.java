@@ -33,13 +33,13 @@ public class Game {
 	}
 
 	public void update() {
-		if(gameWon){
+		if (gameWon) {
 			return;
 		}
 
 		boolean next = players.get(playersTurn).update(offset);
 		if (next) {
-			if(track.wins(players.get(playersTurn).getLocation())){
+			if (track.wins(players.get(playersTurn).getLocation())) {
 				gameWon = true;
 				return;
 			}
@@ -48,12 +48,12 @@ public class Game {
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);
 		}
-		
+
 		// testing track generation
 		// if(Main.input.isKeyDown(KeyEvent.VK_W)){
 		// seed++; track = new Track(seed);
 		// Main.input.artificialKeyReleased(KeyEvent.VK_W); }
-		
+
 	}
 
 	public void draw(Graphics g) {
@@ -61,26 +61,33 @@ public class Game {
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track
-//		for (int x = 1; x < Main.width; x +=5) {
-//			for (int y = 1; y < Main.height; y +=5) {
-//				if (track.onTrack(new Point(x, y))) {
-//					g.setColor(Color.green);
-//					g.drawRect(x, y, 1, 1);
-//				} else {
-//					g.setColor(Color.red);
-//					g.drawRect(x, y, 1, 1);
-//				}
-//			}
-//		}
-		
+		// for (int x = 1; x < Main.width; x +=5) {
+		// for (int y = 1; y < Main.height; y +=5) {
+		// if (track.onTrack(new Point(x, y))) {
+		// g.setColor(Color.green);
+		// g.drawRect(x, y, 1, 1);
+		// } else {
+		// g.setColor(Color.red);
+		// g.drawRect(x, y, 1, 1);
+		// }
+		// }
+		// }
+
 		g.translate(offset.x, offset.y);
-		if(gameWon){
-			Font font = new Font("Verdana",Font.BOLD,40);
-			g.setFont(font);
-			FontMetrics met = g.getFontMetrics();
-			String winner = "The winner is: Player "+(playersTurn+1);
-			int width = met.stringWidth(winner);
-			g.drawString(winner, (Main.width-width )/2, 300);
+
+		// tells the players whos turn it is
+		Font font = new Font("Verdana", Font.BOLD, 40);
+		g.setFont(font);
+		FontMetrics met = g.getFontMetrics();
+		String turn = "Players turn:  " + (playersTurn + 1);
+		int width = met.stringWidth(turn);
+		g.drawString(turn, 50, 100);
+
+		// tells the players whos won
+		if (gameWon) {
+			String winner = "The winner is: Player " + (playersTurn + 1);
+			width = met.stringWidth(winner);
+			g.drawString(winner, (Main.width - width) / 2, 300);
 		}
 	}
 

@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 
 public class Car {
 
-	private Point2D location, velocity;
+	private Point2D location, velocity, leftTrack;
 	private Point mouse;
 	private float thrust, breakForce, steering;
 	private int movement = 25;
