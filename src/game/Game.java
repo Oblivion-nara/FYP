@@ -12,9 +12,10 @@ import java.util.ArrayList;
 public class Game {
 
 	private ArrayList<Car> players;
-	private Point offset;
+	private Point offset, prevOffset;
 	private Track track;
 	private boolean gameWon;
+	private float interpolation = 1f;
 	private long seed = 1000l;
 	private int playersTurn;
 
@@ -26,10 +27,30 @@ public class Game {
 		this.players = new ArrayList<>();
 		for (int i = 0; i < players; i++) {
 			this.players.add(new Car(start,
-					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255))));
+					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)),
+					track.getTrackWidth()));
 		}
 		this.players.get(0).go();
-		offset = new Point(0, 0);
+		offset = prevOffset = new Point(0, 0);
+	}
+
+	// does a binary search to find the edge where the car left the track
+	private Point getPointOnTrack(int iterations, Point loc, Point ret) {
+
+		Point mid = new Point((int) (loc.getX() + ret.getX()) / 2, (int) (loc.getY() + ret.getY()) / 2);
+
+		if (track.onTrack(mid)) {
+			if (iterations < 0) {
+				return mid;
+			}
+			return getPointOnTrack(--iterations, loc, mid);
+		} else {
+			if (iterations < 0) {
+				return ret;
+			}
+			return getPointOnTrack(--iterations, mid, ret);
+		}
+
 	}
 
 	public void update() {
@@ -39,25 +60,47 @@ public class Game {
 
 		boolean next = players.get(playersTurn).update(offset);
 		if (next) {
-			if (track.wins(players.get(playersTurn).getLocation())) {
+			Car player = players.get(playersTurn);
+			Point loc = (Point) player.getLocation();
+			boolean onTrack = player.onTrack();
+
+			if (onTrack && !track.onTrack(loc)) {
+				player.setTrackReturn(
+						track.getNearestTrackPoint(getPointOnTrack(10, loc, (Point) player.getTrackReturn())));
+				player.setTrack(false);
+
+			} else if (!onTrack && track.inRange(loc, (Point) player.getTrackReturn())) {
+				player.setTrack(true);
+
+			} else if (onTrack && track.wins(loc)) {
+
 				gameWon = true;
 				return;
 			}
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
+			prevOffset = offset;
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);
+			interpolation = 0f;
 		}
 
 		// testing track generation
-		// if(Main.input.isKeyDown(KeyEvent.VK_W)){
-		// seed++; track = new Track(seed);
-		// Main.input.artificialKeyReleased(KeyEvent.VK_W); }
+		// if (Main.input.isKeyDown(KeyEvent.VK_W)) {
+		// seed++;
+		// track = new Track(seed);
+		// Main.input.artificialKeyReleased(KeyEvent.VK_W);
+		// }
+		if (interpolation < 1) {
+			interpolation += 0.1f;
+		}
 
 	}
 
 	public void draw(Graphics g) {
-		g.translate(-offset.x, -offset.y);
+
+		g.translate(-(int) (interpolation * offset.x + (1 - interpolation) * prevOffset.x),
+				-(int) (interpolation * offset.y + (1 - interpolation) * prevOffset.y));
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track

@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -102,7 +103,7 @@ public class Main extends JFrame {
 			return;
 		}
 		if (input.isKeyDown(KeyEvent.VK_R)) {
-//			 game.newGame();
+			 game = new Game(2);
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 		double wheel = input.getMouseWheelMovement();
