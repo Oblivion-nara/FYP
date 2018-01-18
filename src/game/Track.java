@@ -167,12 +167,24 @@ public class Track {
 					(int) segments.get(i + 1).getY());
 
 		}
-		g2.setStroke(new BasicStroke(strokeSize/4));
-		for(){
-			
+		// draw finish
+		Point finish = segments.get(maxSegments - 1);
+		g2.setColor(Color.BLACK);
+		g2.drawLine(finish.x, finish.y, finish.x, finish.y);
+		g2.setColor(Color.white);
+		g2.setStroke(new BasicStroke(strokeSize / 4));
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if ((i + j) % 2 == 0) {
+					g2.drawLine(finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
+							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j),
+							finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
+							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j));
+				}
+			}
+
 		}
 		g2.setStroke(defaultStroke);
-		
 
 	}
 }

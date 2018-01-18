@@ -23,8 +23,8 @@ public class Main extends JFrame {
 	private static GraphicsDevice device;
 
 	private float zoom;
-	private Graphics g;
-	private Image offImage;
+	private Graphics mainG;
+	private Image finalImage, offImage, ui;
 	private Game game;
 
 	public static void main(String[] args) {
@@ -61,7 +61,9 @@ public class Main extends JFrame {
 		height = this.getHeight();
 
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		g = this.getGraphics();
+		ui = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		mainG = this.getGraphics();
 
 		int players = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
 		game = new Game(players, trackWidth, trackLength, trackSegLength, aiDifficulty);
@@ -122,9 +124,12 @@ public class Main extends JFrame {
 	private void draw() {
 
 		Graphics offg = offImage.getGraphics();
+		ui.flush();
+		Graphics uig = ui.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
 		game.draw(offg);
+		game.drawui(uig);
 
 		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
@@ -132,8 +137,11 @@ public class Main extends JFrame {
 			offg.fillRect(mouse.x, mouse.y, 2, 2);
 		}
 
-		g.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
+		Graphics finalG = finalImage.getGraphics();
+		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
+		finalG.drawImage(ui, 0, 0, null);
+		mainG.drawImage(finalImage, 0, 0, null);
 
 	}
 

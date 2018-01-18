@@ -95,6 +95,24 @@ public class Game {
 		}
 
 	}
+	
+	public void drawui(Graphics g){
+
+		// tells the players whos turn it is
+		Font font = new Font("Verdana", Font.BOLD, 40);
+		g.setFont(font);
+		g.setColor(Color.black);
+		FontMetrics met = g.getFontMetrics();
+		String turn = "Players turn:  " + (playersTurn + 1);
+		int width = met.stringWidth(turn);
+		g.drawString(turn, 50, 100);
+		// tells the players whos won
+		if (gameWon) {
+			String winner = "The winner is: Player " + (playersTurn + 1);
+			width = met.stringWidth(winner);
+			g.drawString(winner, (Main.width - width) / 2, 300);
+		}
+	}
 
 	public void draw(Graphics g) {
 
@@ -116,20 +134,6 @@ public class Game {
 		// }
 
 		g.translate(offset.x, offset.y);
-
-		// tells the players whos turn it is
-		Font font = new Font("Verdana", Font.BOLD, 40);
-		g.setFont(font);
-		FontMetrics met = g.getFontMetrics();
-		String turn = "Players turn:  " + (playersTurn + 1);
-		int width = met.stringWidth(turn);
-		g.drawString(turn, 50, 100);
-		// tells the players whos won
-		if (gameWon) {
-			String winner = "The winner is: Player " + (playersTurn + 1);
-			width = met.stringWidth(winner);
-			g.drawString(winner, (Main.width - width) / 2, 300);
-		}
 	}
 
 }
