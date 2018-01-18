@@ -14,9 +14,19 @@ public class CarAI extends Car {
 		this.level = level;
 	}
 
-	private Point checkSpaces(Point location, Point velocity, int level) {
+	private PointHeuristic calculateHeuristic(Point location){
+		PointHeuristic heu = new PointHeuristic(location, 0);
+		if(!track.onTrack(location)){
+			return heu;
+		}
+		//calc distance along track and how middel it is
+		return null;
+	}
+	
+	private PointHeuristic checkSpaces(Point location, Point velocity, int level) {
+			PointHeuristic heu = calculateHeuristic(location);
 		if (level >= 0) {
-			return location;
+			return heu;
 		}
 		Point trackloc = track.getNearestTrackPoint(location);
 		for (int x = -movement; x < movement; x += 5) {
@@ -29,7 +39,7 @@ public class CarAI extends Car {
 
 			}
 		}
-		return null;
+		return heu;
 	}
 
 	public boolean update(Point offset) {

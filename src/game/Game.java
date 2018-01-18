@@ -28,7 +28,7 @@ public class Game {
 					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)),
 					track.getTrackWidth()));
 		}
-//		this.players.add(new CarAI(start, new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)), track, aiDifficulty));
+		this.players.add(new CarAI(start, new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)), track, aiDifficulty));
 		this.players.get(0).go();
 		offset = prevOffset = new Point(0, 0);
 	}
