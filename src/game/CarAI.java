@@ -14,19 +14,18 @@ public class CarAI extends Car {
 		this.level = level;
 	}
 
-	private Point checkSpaces(Point location, int level) {
+	private Point checkSpaces(Point location, Point velocity, int level) {
 		if (level >= 0) {
 			return location;
 		}
 		Point trackloc = track.getNearestTrackPoint(location);
 		for (int x = -movement; x < movement; x += 5) {
 			for (int y = -movement; y < movement; y += 5) {
-				Point travel = new Point((int) location.getX() + x, (int) location.getY() + y);
+				Point travel = new Point((int) location.getX() + (int) velocity.getX() + x, (int) location.getY() + (int) velocity.getY() + y);
 				double distance = travel.distance(location.getX() + velocity.getX(), location.getY() + velocity.getY());
 				if (distance > movement) {
 					continue;
 				}
-				
 
 			}
 		}
@@ -34,7 +33,7 @@ public class CarAI extends Car {
 	}
 
 	public boolean update(Point offset) {
-		checkSpaces((Point) location, level);
+		checkSpaces(location, velocity, level);
 		return true;
 	}
 

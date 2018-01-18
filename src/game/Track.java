@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,15 +13,16 @@ import java.util.Random;
 public class Track {
 
 	private Random random;
-	private final int maxSegments = 20;
-	private final float seglength = 50;
 	private ArrayList<Point> segments;
-	private int strokeSize = 20;
+	private int strokeSize, maxSegments, segLength;
 
-	public Track(long seed) {
+	public Track(long seed, int trackWidth, int maxSegments, int segLength) {
 
 		random = new Random(seed);
 		segments = new ArrayList<>();
+		strokeSize = trackWidth;
+		this.segLength = segLength;
+		this.maxSegments = maxSegments;
 		initTrack();
 	}
 
@@ -43,7 +43,7 @@ public class Track {
 			direction += angle;
 			direction %= (Math.PI * 2);
 			Point temp = new Point(current);
-			temp.translate((int) (seglength * Math.cos(direction)), (int) (seglength * Math.sin(direction)));
+			temp.translate((int) (segLength * Math.cos(direction)), (int) (segLength * Math.sin(direction)));
 			if (basicIntersects(i - 1, current, temp)) {
 				i--;
 				continue;
@@ -55,15 +55,15 @@ public class Track {
 		}
 
 	}
-	
-	public int getTrackWidth(){
+
+	public int getTrackWidth() {
 		return strokeSize;
 	}
 
 	public boolean basicIntersects(int currentMax, Point start, Point end) {
 
 		for (int i = 0; i < currentMax; i++) {
-			if (segments.get(i).distance(end) < seglength) {
+			if (segments.get(i).distance(end) < segLength) {
 				return true;
 			}
 		}
@@ -94,9 +94,9 @@ public class Track {
 		for (int i = 0; i < maxSegments - 1; i++) {
 			Point seg = segments.get(i);
 			Point next = segments.get(i + 1);
-			if (seg.distance(loc) < seglength + strokeSize / 2 && next.distance(loc) < seglength + strokeSize / 2) {
+			if (seg.distance(loc) < segLength + strokeSize / 2 && next.distance(loc) < segLength + strokeSize / 2) {
 				double dist = Math.sqrt(Math.pow(seg.distance(loc), 2) + Math.pow(getPerpDistance(seg, next, loc), 2));
-				double factor = dist / seglength;
+				double factor = dist / segLength;
 				ret = new Point((int) ((1 - factor) * seg.getX() + factor * next.getX()),
 						(int) ((1 - factor) * seg.getY() + factor * next.getY()));
 
@@ -112,8 +112,8 @@ public class Track {
 
 		for (int i = 0; i < maxSegments - 1; i++) {
 
-			if (segments.get(i).distance(location) < seglength + strokeSize / 2
-					&& segments.get(i + 1).distance(location) < seglength + strokeSize / 2
+			if (segments.get(i).distance(location) < segLength + strokeSize / 2
+					&& segments.get(i + 1).distance(location) < segLength + strokeSize / 2
 					&& onLine(segments.get(i), segments.get(i + 1), location)) {
 				return true;
 			}
@@ -167,7 +167,12 @@ public class Track {
 					(int) segments.get(i + 1).getY());
 
 		}
+		g2.setStroke(new BasicStroke(strokeSize/4));
+		for(){
+			
+		}
 		g2.setStroke(defaultStroke);
+		
 
 	}
 }

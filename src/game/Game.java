@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Game {
@@ -19,10 +17,10 @@ public class Game {
 	private long seed = 1000l;
 	private int playersTurn;
 
-	public Game(int players) {
+	public Game(int players, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
 
 		gameWon = false;
-		track = new Track(seed);
+		track = new Track(seed, trackWidth,trackLength,trackSegLength);
 		Point start = track.getStart();
 		this.players = new ArrayList<>();
 		for (int i = 0; i < players; i++) {
@@ -30,6 +28,7 @@ public class Game {
 					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)),
 					track.getTrackWidth()));
 		}
+//		this.players.add(new CarAI(start, new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)), track, aiDifficulty));
 		this.players.get(0).go();
 		offset = prevOffset = new Point(0, 0);
 	}
@@ -125,7 +124,6 @@ public class Game {
 		String turn = "Players turn:  " + (playersTurn + 1);
 		int width = met.stringWidth(turn);
 		g.drawString(turn, 50, 100);
-
 		// tells the players whos won
 		if (gameWon) {
 			String winner = "The winner is: Player " + (playersTurn + 1);

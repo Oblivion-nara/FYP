@@ -13,7 +13,7 @@ public class Car {
 	private Point mouse;
 	private Color color;
 	protected boolean myTurn, drawMovement, onTrack;
-	protected Point2D location, velocity, trackReturn;
+	protected Point location, velocity, trackReturn;
 	protected int movement = 40, trackSize;
 
 	public Car(Point start, Color color, int trackSize) {
@@ -24,7 +24,7 @@ public class Car {
 		myTurn = false;
 		drawMovement = false;
 		onTrack = true;
-		velocity = new Point2D.Double(0, 0);
+		velocity = new Point(0, 0);
 	}
 
 	public Color getColor() {
@@ -67,7 +67,7 @@ public class Car {
 					drawMovement = true;
 					if (Main.input.isMouseDown(1)) {
 						if (onTrack) {
-							trackReturn = (Point2D) location.clone();
+							trackReturn = (Point)location.clone();
 						}
 						velocity.setLocation(mouse.getX() - location.getX(), mouse.getY() - location.getY());
 						location.setLocation(mouse.x, mouse.y);

@@ -1,14 +1,11 @@
 package game;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
@@ -29,7 +26,6 @@ public class Main extends JFrame {
 	private Graphics g;
 	private Image offImage;
 	private Game game;
-	private Dimension maxSize;
 
 	public static void main(String[] args) {
 		try {
@@ -67,7 +63,8 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		g = this.getGraphics();
 
-		game = new Game(2);
+		int players = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
+		game = new Game(players, trackWidth, trackLength, trackSegLength, aiDifficulty);
 	}
 
 	public void loop() {
@@ -103,15 +100,15 @@ public class Main extends JFrame {
 			return;
 		}
 		if (input.isKeyDown(KeyEvent.VK_R)) {
-			 game = new Game(2);
+			game = new Game(2, 40, 40, 40, 3);
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 		double wheel = input.getMouseWheelMovement();
-		if(wheel != 0){
-			zoom -= wheel/10f;
-			if(zoom < 0){
+		if (wheel != 0) {
+			zoom -= wheel / 10f;
+			if (zoom < 0) {
 				zoom = 0;
-			}else if(zoom > 2){
+			} else if (zoom > 2) {
 				zoom = 2;
 			}
 			input.setZoom(zoom);
@@ -135,7 +132,8 @@ public class Main extends JFrame {
 			offg.fillRect(mouse.x, mouse.y, 2, 2);
 		}
 
-		g.drawImage(offImage, -(int)(zoom*width/2f), -(int)(zoom*height/2f), (int)((1+zoom)*width), (int)((1+zoom)*width), null);
+		g.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
+				(int) ((1 + zoom) * width), null);
 
 	}
 
