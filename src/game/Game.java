@@ -17,10 +17,10 @@ public class Game {
 	private long seed = 1000l;
 	private int playersTurn;
 
-	public Game(int players, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
+	public Game(int players, int ais, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
 
 		gameWon = false;
-		track = new Track(seed, trackWidth,trackLength,trackSegLength);
+		track = new Track(seed, trackWidth, trackLength, trackSegLength);
 		Point start = track.getStart();
 		this.players = new ArrayList<>();
 		for (int i = 0; i < players; i++) {
@@ -28,7 +28,11 @@ public class Game {
 					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)),
 					track.getTrackWidth()));
 		}
-		this.players.add(new CarAI(start, new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)), track, aiDifficulty));
+		for (int i = 0; i < ais; i++) {
+			this.players.add(new CarAI(start,
+					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)), track,
+					aiDifficulty));
+		}
 		this.players.get(0).go();
 		offset = prevOffset = new Point(0, 0);
 	}
@@ -95,8 +99,8 @@ public class Game {
 		}
 
 	}
-	
-	public void drawui(Graphics g){
+
+	public void drawui(Graphics g) {
 
 		// tells the players whos turn it is
 		Font font = new Font("Verdana", Font.BOLD, 40);

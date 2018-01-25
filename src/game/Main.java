@@ -2,8 +2,6 @@ package game;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -20,19 +18,13 @@ public class Main extends JFrame {
 	public static InputHandler input;
 	public static Random random;
 	public static int width, height;
-	private static GraphicsDevice device;
 
 	private float zoom;
 	private Graphics mainG;
-	private Image finalImage, offImage, ui;
+	private Image finalImage, offImage;
 	private Game game;
 
 	public static void main(String[] args) {
-		try {
-			device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[1];
-		} catch (Exception e) {
-			System.err.println("no second display");
-		}
 		new Main().run();
 	}
 
@@ -61,12 +53,11 @@ public class Main extends JFrame {
 		height = this.getHeight();
 
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		ui = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		mainG = this.getGraphics();
 
-		int players = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
-		game = new Game(players, trackWidth, trackLength, trackSegLength, aiDifficulty);
+		int players = 0, ais = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
+		game = new Game(players, ais, trackWidth, trackLength, trackSegLength, aiDifficulty);
 	}
 
 	public void loop() {
@@ -102,7 +93,7 @@ public class Main extends JFrame {
 			return;
 		}
 		if (input.isKeyDown(KeyEvent.VK_R)) {
-			game = new Game(2, 40, 40, 40, 3);
+			game = new Game(1, 1, 40, 40, 40, 3);
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 		double wheel = input.getMouseWheelMovement();
@@ -122,14 +113,12 @@ public class Main extends JFrame {
 	}
 
 	private void draw() {
+		
 
 		Graphics offg = offImage.getGraphics();
-		ui.flush();
-		Graphics uig = ui.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
 		game.draw(offg);
-		game.drawui(uig);
 
 		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
@@ -140,7 +129,7 @@ public class Main extends JFrame {
 		Graphics finalG = finalImage.getGraphics();
 		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
-		finalG.drawImage(ui, 0, 0, null);
+		game.drawui(finalG);
 		mainG.drawImage(finalImage, 0, 0, null);
 
 	}

@@ -50,7 +50,6 @@ public class Track {
 			}
 			current = temp;
 			segments.add(new Point(current));
-			System.out.println(current);
 
 		}
 
@@ -105,6 +104,18 @@ public class Track {
 
 		}
 		return ret;
+
+	}
+
+	public double getDistanceAlong(Point location) {
+
+		for (int i = 0; i < maxSegments; i++) {
+			double distance = segments.get(i).distance(location);
+			if (distance < segLength) {
+				return (i + distance / segLength) / maxSegments;
+			}
+		}
+		return 0f;
 
 	}
 
