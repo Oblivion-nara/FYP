@@ -100,6 +100,8 @@ public class Car {
 		}
 		g2.setColor(color);
 		g2.fillRect((int) location.getX() - 5, (int) location.getY() - 5, 10, 10);
+		g2.setColor(Color.black);
+		g2.fillRect((int) trackReturn.getX() - 5, (int) trackReturn.getY() - 5, 10, 10);
 
 		if (myTurn) {
 			g2.setColor(Color.red);

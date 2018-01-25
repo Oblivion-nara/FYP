@@ -56,6 +56,27 @@ public class Game {
 
 	}
 
+	private Point checkMove(int iterations, Point loc, Point previous) {
+		if (iterations <= 0) {
+			return null;
+		}
+
+		Point mid = new Point((int) (loc.getX() + previous.getX()) / 2, (int) (loc.getY() + previous.getY()) / 2);
+		if (!track.onTrack(mid)) {
+			return mid;
+		}
+		Point temp = checkMove(iterations - 1, loc, mid);
+		if (temp != null) {
+			return temp;
+		}
+		temp = checkMove(iterations - 1, mid, loc);
+		if (temp != null) {
+			return temp;
+		}
+		return null;
+
+	}
+
 	public void update() {
 		if (gameWon) {
 			return;
@@ -65,6 +86,7 @@ public class Game {
 		if (next) {
 			Car player = players.get(playersTurn);
 			Point loc = (Point) player.getLocation();
+			Point offTrack = checkMove(5, (Point) loc, (Point) player.getTrackReturn());
 			boolean onTrack = player.onTrack();
 
 			if (onTrack && !track.onTrack(loc)) {
@@ -79,6 +101,10 @@ public class Game {
 
 				gameWon = true;
 				return;
+			} else if (onTrack && offTrack != null) {
+				player.setTrackReturn(
+						track.getNearestTrackPoint(getPointOnTrack(10, offTrack, (Point) player.getTrackReturn())));
+				player.setTrack(false);
 			}
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
@@ -125,17 +151,19 @@ public class Game {
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track
-		// for (int x = 1; x < Main.width; x +=5) {
-		// for (int y = 1; y < Main.height; y +=5) {
-		// if (track.onTrack(new Point(x, y))) {
-		// g.setColor(Color.green);
-		// g.drawRect(x, y, 1, 1);
-		// } else {
-		// g.setColor(Color.red);
-		// g.drawRect(x, y, 1, 1);
-		// }
-		// }
-		// }
+		for (int x = 1; x < Main.width; x += 5) {
+			for (int y = 1; y < Main.height; y += 5) {
+				if (track.onTrack(new Point(x, y))) {
+					PointHeuristic heu = ((CarAI)players.get(playersTurn)).calculateHeuristic(new Point(x, y), new Point (0,0));
+					g.setColor(new Color(0f,0f,(float)heu.getHeuristic()));
+					g.drawRect(x, y, 1, 1);
+				} else {
+					PointHeuristic heu = ((CarAI)players.get(playersTurn)).offTrackHeuristic(new Point(x, y), new Point (0,0));
+					g.setColor(new Color(0f,(float)heu.getHeuristic()/(Main.width/2),0f));
+					g.drawRect(x, y, 1, 1);
+				}
+			}
+		}
 
 		g.translate(offset.x, offset.y);
 	}

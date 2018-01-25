@@ -112,9 +112,11 @@ public class Track {
 		for (int i = 0; i < maxSegments; i++) {
 			double distance = segments.get(i).distance(location);
 			if (distance < segLength) {
-				return (i + distance / segLength) / maxSegments;
+				double heu = (i + distance / segLength) / maxSegments;
+				return heu;
 			}
 		}
+		System.err.println("0 heu");
 		return 0f;
 
 	}
