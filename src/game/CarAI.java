@@ -37,7 +37,11 @@ public class CarAI extends Car {
 	private PointHeuristic offTrackHeuristic(Point location, Point velocity) {
 
 		// function (x=0,y=1) (x->infinity,y->0)
-		return new PointHeuristic(location, velocity, 1.0 / (trackReturn.distance(location) + 1.0));
+		double hueristic = 1.0 / (trackReturn.distance(location) + 1.0);
+		if(hueristic < track.getTrackWidth()){
+			hueristic = 1.0;
+		}
+		return new PointHeuristic(location, velocity, hueristic);
 	}
 
 	private PointHeuristic checkSpaces(Point location, Point velocity, int level) {
@@ -46,6 +50,9 @@ public class CarAI extends Car {
 			heu = calculateHeuristic(location, velocity);
 		} else {
 			heu = offTrackHeuristic(location, velocity);
+			if(heu.getHeuristic() < 1.0001){
+				return heu;
+			}
 		}
 		if (level <= 0 || heu.getHeuristic() < 0) {
 			return heu;
@@ -66,11 +73,11 @@ public class CarAI extends Car {
 
 			}
 		}
-//		if (heu.getLocation().equals(location)) {
-//			heu = new PointHeuristic(
-//					new Point((int) (location.getX() + velocity.getX()), (int) (location.getY() + velocity.getY())),
-//					velocity, 0);
-//		}
+		if (heu.getLocation().equals(location)) {
+			heu = new PointHeuristic(
+					new Point((int) (location.getX() + velocity.getX()), (int) (location.getY() + velocity.getY())),
+					velocity, 0);
+		}
 		return heu;
 	}
 
