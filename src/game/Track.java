@@ -89,7 +89,7 @@ public class Track {
 
 	public Point getNearestTrackPoint(Point loc) {
 
-		Point ret = null;
+		Point ret = (Point)loc.clone();
 		for (int i = 0; i < maxSegments - 1; i++) {
 			Point seg = segments.get(i);
 			Point next = segments.get(i + 1);
@@ -116,7 +116,6 @@ public class Track {
 				return heu;
 			}
 		}
-		System.err.println("0 heu");
 		return 0f;
 
 	}

@@ -151,15 +151,16 @@ public class Game {
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track
-		for (int x = 1; x < Main.width; x += 5) {
-			for (int y = 1; y < Main.height; y += 5) {
+		for (int x = offset.x; x < Main.width-offset.x; x += 5) {
+			for (int y = offset.y; y < Main.height-offset.y; y += 5) {
 				if (track.onTrack(new Point(x, y))) {
 					PointHeuristic heu = ((CarAI)players.get(playersTurn)).calculateHeuristic(new Point(x, y), new Point (0,0));
-					g.setColor(new Color(0f,0f,(float)heu.getHeuristic()));
+//					double heu = track.getDistanceAlong(new Point(x,y));
+					g.setColor(new Color(0f,(float)heu.getHeuristic(),(float)heu.getHeuristic()));
 					g.drawRect(x, y, 1, 1);
 				} else {
 					PointHeuristic heu = ((CarAI)players.get(playersTurn)).offTrackHeuristic(new Point(x, y), new Point (0,0));
-					g.setColor(new Color(0f,(float)heu.getHeuristic()/(Main.width/2),0f));
+					g.setColor(new Color((float)heu.getHeuristic(),(float)heu.getHeuristic(),(float)heu.getHeuristic()));
 					g.drawRect(x, y, 1, 1);
 				}
 			}

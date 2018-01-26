@@ -17,16 +17,17 @@ public class CarAI extends Car {
 
 	public void go() {
 		myTurn = true;
-		moveTime = System.currentTimeMillis() + 1000;
+		moveTime = System.currentTimeMillis() + 500;
 	}
 
 	public PointHeuristic calculateHeuristic(Point location, Point velocity) {
 		PointHeuristic heu = new PointHeuristic(location, velocity, -1);
 		if (!track.onTrack(location)) {
-			return offTrackHeuristic(location, velocity);
+			return new PointHeuristic(location, velocity, 0);
 		}
 		if (track.wins(location)) {
 			heu.setHeuristic(1.0);
+			System.out.println("winner");
 			return heu;
 		}
 		// calc distance along track
@@ -37,32 +38,14 @@ public class CarAI extends Car {
 	}
 
 	public PointHeuristic offTrackHeuristic(Point location, Point velocity) {
-
 		// function (x=0,y=1) (x->infinity,y->0)
-		double hueristic = 1.0 / (trackReturn.distance(location) + 1.0);
-		if(hueristic < track.getTrackWidth()){
-			hueristic = 1.0;
-		}
+		double hueristic = 1.0 / (trackReturn.distance(location) / (Main.width / 2) + 1.0);
 		return new PointHeuristic(location, velocity, hueristic);
 	}
 
 	private PointHeuristic checkSpaces(Point location, Point velocity, int level) {
-		PointHeuristic heu;
-		if (onTrack) {
-			heu = calculateHeuristic(location, velocity);
-		} else {
-			heu = offTrackHeuristic(location, velocity);
-			if(heu.getHeuristic() < 1.0001){
-				return heu;
-			}
-		}
-		if (level <= 0) {
-			return heu;
-		}
-		if (heu.getHeuristic() <= 0) {
-			System.err.println("CarAI.checkSpaces(), heu <= 0"+ heu.getLocation());
-		}
-		heu.setHeuristic(0);
+
+		PointHeuristic heu = new PointHeuristic(location, velocity, -1);
 		for (int x = -movement; x < movement; x += 10) {
 			for (int y = -movement; y < movement; y += 10) {
 				Point travel = new Point((int) (location.getX() + velocity.getX()) + x,
@@ -71,11 +54,20 @@ public class CarAI extends Car {
 				if (distance > movement) {
 					continue;
 				}
-				PointHeuristic nextHeu = checkSpaces(travel, new Point(velocity.x + x, velocity.y + y), level - 1);
-				if (nextHeu.getHeuristic() >= heu.getHeuristic()) {
-					// System.err.println("n > c " + nextHeu.getHeuristic());
-					heu.setHeuristic(nextHeu.getHeuristic());
-					heu.setVelocity(new Point(velocity.x + x, velocity.y + y));
+				PointHeuristic temp;
+				if (level <= 0) {
+					if (onTrack) {
+						temp = calculateHeuristic(travel, new Point(velocity.x + x, velocity.y + y));
+					} else {
+						temp = offTrackHeuristic(travel, new Point(velocity.x + x, velocity.y + y));
+					}
+				} else {
+					temp = checkSpaces(travel, new Point(velocity.x + x, velocity.y + y), level - 1);
+				}
+				if (temp.getHeuristic() > heu.getHeuristic()) {
+					heu.setLocation(travel);
+					heu.setVelocity(velocity);
+					heu.setHeuristic(temp.getHeuristic());
 				}
 
 			}
@@ -94,11 +86,11 @@ public class CarAI extends Car {
 			return false;
 		}
 		if (onTrack) {
-			trackReturn = location;
+			trackReturn.setLocation(location);
 		}
 		PointHeuristic heu = checkSpaces(location, velocity, level);
-		this.location.translate(heu.getVelocity().x, heu.getVelocity().y);
-		this.velocity = heu.getVelocity();
+		this.location.setLocation(heu.getLocation());
+		this.velocity.setLocation(heu.getVelocity());
 		myTurn = false;
 		return true;
 	}
