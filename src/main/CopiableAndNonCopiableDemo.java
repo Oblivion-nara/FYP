@@ -60,12 +60,12 @@ class CopiableAndNonCopiableDemo {
         DistributedCommunicator communicator
                 = new DistributedCommunicator(
                         TCPCommunicationAddress.fromInetAddress(
-                                InetAddress.getLoopbackAddress(), 15238));
+                                InetAddress.getLoopbackAddress(), 15239));
 
         communicator.startCommunication();
 
         CommunicationAddress remoteAddress
-                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239);
+                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
 
         final Mutator remoteEngine
                 = DistributedCommunicator.getCommunicator().runRemotely(Mutator::new, remoteAddress);

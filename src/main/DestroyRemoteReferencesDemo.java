@@ -19,12 +19,12 @@ public class DestroyRemoteReferencesDemo {
     public static void main(String[] args) throws IOException {
         DistributedCommunicator communicator
                 = new DistributedCommunicator(
-                TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238));
+                TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239));
 
         communicator.startCommunication();
 
         CommunicationAddress remoteAddress
-                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239);
+                = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
 
         NonCopiableType remoteObject = DistributedCommunicator.getCommunicator()
                 .runRemotely(NonCopiableType::new, remoteAddress);

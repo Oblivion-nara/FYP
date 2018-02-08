@@ -296,6 +296,7 @@ For example, below is a representation of a Matrix:
 
 ```java
 class Matrix {
+
     int[][] elements;
 
     Matrix(int rows, int cols) {

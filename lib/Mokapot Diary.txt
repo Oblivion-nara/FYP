@@ -1,0 +1,7 @@
+1)	Started by simply running everything on the server to see what happens. 
+	Application crashed as remote objects cannot draw to images on the client.
+	Needed to split the update and draw methods into separate classes.
+	Took 30 mins to separate methods.
+	Got a Mokapot error.
+	Looked through some of the guide and realise that final/private objects cannot be returned by remote objects.
+	

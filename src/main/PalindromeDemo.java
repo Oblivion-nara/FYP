@@ -21,11 +21,10 @@ public class PalindromeDemo {
         CommunicationAddress remoteAddress
                 = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
 
-        final PalindromeVerifier palindromeVerifier = DistributedCommunicator.getCommunicator()
+        PalindromeVerifier palindromeVerifier = DistributedCommunicator.getCommunicator()
                 .runRemotely(PalindromeVerifier::new, remoteAddress);
 
-        System.out.println(palindromeVerifier.verify("racecar"));
-
+        palindromeVerifier = null;
         DistributedCommunicator.getCommunicator().stopCommunication();
     }
 
