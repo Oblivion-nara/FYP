@@ -3,6 +3,9 @@ package mokapot;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import xyz.acygn.mokapot.CommunicationAddress;
+import xyz.acygn.mokapot.DistributedCommunicator;
+
 public class Game {
 
 	public ArrayList<Car> players;
@@ -13,10 +16,10 @@ public class Game {
 	public long seed = 1000l;
 	public int playersTurn;
 
-	public Game(int players, int ais, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
+	public Game(int players, int ais, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty, CommunicationAddress remoteAddress) {
 
 		gameWon = false;
-		track = new Track(seed, trackWidth, trackLength, trackSegLength);
+		track = DistributedCommunicator.getCommunicator().runRemotely(() -> new Track(seed, trackWidth, trackLength, trackSegLength),remoteAddress);
 		Point start = track.getStart();
 		this.players = new ArrayList<>();
 		for (int i = 0; i < players; i++) {

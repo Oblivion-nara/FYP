@@ -30,7 +30,6 @@ public class Main extends JFrame {
 	private Image finalImage, offImage;
 	public Game game;
 	private DrawGame drawGame;
-	private DistributedCommunicator communicator;
 	private CommunicationAddress remoteAddress;
 
 	public static void main(String[] args) {
@@ -66,12 +65,15 @@ public class Main extends JFrame {
 		mainG = this.getGraphics();
 		
 		try {
-			game = new SetupServer().setup();
+			remoteAddress = new SetupServer().setup();
 		} catch (IllegalStateException | IOException e) {
 			e.printStackTrace();
 			this.dispose();
 			System.exit(0);
 		}
+
+		int players = 0, ais = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
+		game = new Game(players, ais, trackWidth, trackLength, trackSegLength, aiDifficulty, remoteAddress);
 		drawGame = new DrawGame(game);
 		// game = new Game(players, ais, trackWidth, trackLength,
 		// trackSegLength, aiDifficulty);
@@ -113,7 +115,7 @@ public class Main extends JFrame {
 			return;
 		}
 		if (input.isKeyDown(KeyEvent.VK_R)) {
-			game = new Game(1, 1, 40, 40, 40, 3);
+			game = new Game(1, 1, 40, 40, 40, 3,remoteAddress);
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 		double wheel = input.getMouseWheelMovement();
