@@ -1,26 +1,51 @@
 package rmi;
 
-import java.rmi.registry.Registry;
+import java.awt.Color;
+import java.awt.Point;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-        
-public class Server implements Hello {
-        
-    public Server() {}
+import java.util.ArrayList;
+import java.util.Random;
 
-    public String sayHello() {
-        return "Hello, world!";
-    }
+import main.Hello;
+
+public class Server {
         
     public static void main(String args[]) {
         
         try {
-            Server obj = new Server();
-            Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);
-
+            Registry registry = LocateRegistry.getRegistry(2001);
+        	Random random = new Random();
+        	int numPlayers = 1, ais = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
+    		Track track = new Track(new Random().nextLong(), trackWidth, trackLength, trackSegLength);
+    		Point start = track.getStart();
+    		CarInterface remCar;
+    		ArrayList<Car> players = new ArrayList<>();
+    		for (int i = 0; i < numPlayers; i++) {
+    			Car car = new Car(start,
+    					new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)),
+    					track.getTrackWidth());
+    			players.add(car);
+    			remCar = (CarInterface) UnicastRemoteObject.exportObject(car, 0);
+                registry.bind("Car"+i, remCar);
+    		}
+    		for (int i = 0; i < ais; i++) {
+    			Car car = new CarAI(start,
+    					new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)), track,
+    					aiDifficulty);
+    			players.add(car);
+    			remCar = (CarInterface) UnicastRemoteObject.exportObject(car, 0);
+                registry.bind("Car"+(i+numPlayers), remCar);
+    		}
+    		players.get(0).go();
+    		Game game = new Game(track, players, trackWidth, trackLength, trackSegLength, aiDifficulty);
+    		GameInterface remGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
+            TrackInterface remTrack = (TrackInterface) UnicastRemoteObject.exportObject(track, 1);
+    		
             // Bind the remote object's stub in the registry
-            Registry registry = LocateRegistry.getRegistry();
-            registry.bind("Hello", stub);
+            registry.bind("Game", remGame);
+            registry.bind("Track", remTrack);
 
             System.err.println("Server ready");
         } catch (Exception e) {

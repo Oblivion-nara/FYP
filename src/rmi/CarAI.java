@@ -1,11 +1,11 @@
-package game;
+package rmi;
 
 import java.awt.Color;
 import java.awt.Point;
 
-import rmi.CarAIInterface;
+import game.PointHeuristic;
 
-public class CarAI extends Car{
+public class CarAI extends Car implements CarAIInterface{
 
 	private int level;
 	private Track track;

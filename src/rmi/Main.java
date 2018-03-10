@@ -1,4 +1,4 @@
-package mokapot;
+package rmi;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,15 +6,13 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.InetAddress;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
-import xyz.acygn.mokapot.CommunicationAddress;
-import xyz.acygn.mokapot.DistributedCommunicator;
-import xyz.acygn.mokapot.TCPCommunicationAddress;
+import main.Hello;
 
 public class Main extends JFrame {
 
@@ -28,10 +26,7 @@ public class Main extends JFrame {
 	private float zoom;
 	private Graphics mainG;
 	private Image finalImage, offImage;
-	public Game game;
-	private DrawGame drawGame;
-	private DistributedCommunicator communicator;
-	private CommunicationAddress remoteAddress;
+	private Game game;
 
 	public static void main(String[] args) {
 		new Main().run();
@@ -64,23 +59,15 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		mainG = this.getGraphics();
+        try {
+            Registry registry = LocateRegistry.getRegistry(2001);
+            game = (Game) registry.lookup("Game");
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+			running = false;
+        }
 		
-//		try {
-//			game = new SetupServer().setup();
-//		} catch (IllegalStateException | IOException e) {
-//			e.printStackTrace();
-//			this.dispose();
-//			System.exit(0);
-//		}
-
-		int players = 0, ais = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
-		game = new Game(players, ais, trackWidth, trackLength, trackSegLength, aiDifficulty);
-		drawGame = new DrawGame(game);
-		// game = new Game(players, ais, trackWidth, trackLength,
-		// trackSegLength, aiDifficulty);
-	}
-	
-
+}
 
 	public void loop() {
 
@@ -102,7 +89,6 @@ public class Main extends JFrame {
 			}
 
 		}
-		game = null;
 		this.dispose();
 
 	}
@@ -114,10 +100,6 @@ public class Main extends JFrame {
 		if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
 			running = false;
 			return;
-		}
-		if (input.isKeyDown(KeyEvent.VK_R)) {
-			game = new Game(1, 1, 40, 40, 40, 3);
-			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 		double wheel = input.getMouseWheelMovement();
 		if (wheel != 0) {
@@ -131,16 +113,17 @@ public class Main extends JFrame {
 			input.stopMouseWheel();
 		}
 
-		game.update();
+        game.update();
 
 	}
 
 	private void draw() {
+		
 
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-		drawGame.draw(offg);
+		game.draw(offg);
 
 		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
@@ -151,7 +134,7 @@ public class Main extends JFrame {
 		Graphics finalG = finalImage.getGraphics();
 		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
-		drawGame.drawui(finalG);
+		game.drawui(finalG);
 		mainG.drawImage(finalImage, 0, 0, null);
 
 	}

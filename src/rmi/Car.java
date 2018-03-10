@@ -1,4 +1,4 @@
-package game;
+package rmi;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-public class Car {
+public class Car implements CarInterface{
 	
 	private Point mouse;
 	private Color color;
