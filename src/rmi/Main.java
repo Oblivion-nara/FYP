@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Random;
@@ -26,7 +27,7 @@ public class Main extends JFrame {
 	private float zoom;
 	private Graphics mainG;
 	private Image finalImage, offImage;
-	private Game game;
+	private GameInterface game;
 
 	public static void main(String[] args) {
 		new Main().run();
@@ -61,9 +62,9 @@ public class Main extends JFrame {
 		mainG = this.getGraphics();
         try {
             Registry registry = LocateRegistry.getRegistry(2001);
-            game = (Game) registry.lookup("Game");
+            game = (GameInterface) registry.lookup("Game");
         } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
 			running = false;
         }
 		
@@ -113,8 +114,11 @@ public class Main extends JFrame {
 			input.stopMouseWheel();
 		}
 
-        game.update();
-
+        try {
+			game.update();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void draw() {
@@ -123,7 +127,7 @@ public class Main extends JFrame {
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-		game.draw(offg);
+//		game.draw(offg);
 
 		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
@@ -134,7 +138,7 @@ public class Main extends JFrame {
 		Graphics finalG = finalImage.getGraphics();
 		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
-		game.drawui(finalG);
+//		game.drawui(finalG);
 		mainG.drawImage(finalImage, 0, 0, null);
 
 	}

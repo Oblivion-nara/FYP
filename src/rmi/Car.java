@@ -54,6 +54,10 @@ public class Car implements CarInterface{
 	public void setTrackReturn(Point trackReturn) {
 		this.trackReturn = trackReturn;
 	}
+	
+	public void setMouse(Point mouse){
+		this.mouse = mouse;
+	}
 
 	public boolean update(Point offset) {
 
@@ -74,7 +78,6 @@ public class Car implements CarInterface{
 						ret = true;
 						myTurn = false;
 					}
-					Main.input.artificialMouseReleased(1);
 				} else {
 					drawMovement = false;
 				}

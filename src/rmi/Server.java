@@ -8,8 +8,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.Hello;
-
 public class Server {
         
     public static void main(String args[]) {
@@ -41,7 +39,7 @@ public class Server {
     		players.get(0).go();
     		Game game = new Game(track, players, trackWidth, trackLength, trackSegLength, aiDifficulty);
     		GameInterface remGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
-            TrackInterface remTrack = (TrackInterface) UnicastRemoteObject.exportObject(track, 1);
+            TrackInterface remTrack = (TrackInterface) UnicastRemoteObject.exportObject(track, 0);
     		
             // Bind the remote object's stub in the registry
             registry.bind("Game", remGame);
