@@ -1,4 +1,4 @@
-package game;
+package rmi;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,33 +7,20 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class Game {
+public class Game implements GameInterface{
 
 	private ArrayList<Car> players;
 	private Point offset, prevOffset;
 	private Track track;
 	private boolean gameWon;
 	private float interpolation = 1f;
-	private long seed = 1000l;
 	private int playersTurn;
 
-	public Game(int players, int ais, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
+	public Game(Track track, ArrayList<Car> players, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
 
 		gameWon = false;
-		track = new Track(seed, trackWidth, trackLength, trackSegLength);
-		Point start = track.getStart();
-		this.players = new ArrayList<>();
-		for (int i = 0; i < players; i++) {
-			this.players.add(new Car(start,
-					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)),
-					track.getTrackWidth()));
-		}
-		for (int i = 0; i < ais; i++) {
-			this.players.add(new CarAI(start,
-					new Color(Main.random.nextInt(255), Main.random.nextInt(255), Main.random.nextInt(255)), track,
-					aiDifficulty));
-		}
-		this.players.get(0).go();
+		this.track = track;
+		this.players = players;
 		offset = prevOffset = new Point(0, 0);
 	}
 
