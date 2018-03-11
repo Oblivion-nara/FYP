@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public interface TrackInterface extends Remote {
 
@@ -18,4 +19,10 @@ public interface TrackInterface extends Remote {
 	double getDistanceAlong(Point location) throws RemoteException;
 
 	boolean onTrack(Point location) throws RemoteException;
+
+	public int getTrackWidth() throws RemoteException;
+
+	public ArrayList<Point> getSegments() throws RemoteException;
+
+	public int getMaxSegments() throws RemoteException;
 }

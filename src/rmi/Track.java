@@ -7,10 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Track implements TrackInterface{
+public class Track implements TrackInterface {
 
 	private Random random;
 	private ArrayList<Point> segments;
@@ -28,7 +29,7 @@ public class Track implements TrackInterface{
 
 	private void initTrack() {
 
-		Point current = new Point(Main.width / 2, Main.height / 2);
+		Point current = new Point(500, 500);
 		float angle, direction = (float) (random.nextFloat() * Math.PI * 2); // 0*
 																				// is
 																				// right
@@ -57,6 +58,14 @@ public class Track implements TrackInterface{
 
 	public int getTrackWidth() {
 		return strokeSize;
+	}
+
+	public ArrayList<Point> getSegments() {
+		return segments;
+	}
+
+	public int getMaxSegments() {
+		return maxSegments;
 	}
 
 	public boolean basicIntersects(int currentMax, Point start, Point end) {
@@ -89,7 +98,7 @@ public class Track implements TrackInterface{
 
 	public Point getNearestTrackPoint(Point loc) {
 
-		Point ret = (Point)loc.clone();
+		Point ret = (Point) loc.clone();
 		for (int i = 0; i < maxSegments - 1; i++) {
 			Point seg = segments.get(i);
 			Point next = segments.get(i + 1);
@@ -165,14 +174,17 @@ public class Track implements TrackInterface{
 		return false;
 	}
 
-	public void draw(Graphics g) {
+	public static void draw(Graphics g, TrackInterface track) throws RemoteException {
 
 		Graphics2D g2 = (Graphics2D) g;
 		Stroke defaultStroke = g2.getStroke();
+		int strokeSize = track.getTrackWidth();
 		Stroke stroke = new BasicStroke(strokeSize);
 		g2.setStroke(stroke);
 
 		g2.setColor(Color.lightGray);
+		int maxSegments = track.getMaxSegments();
+		ArrayList<Point> segments = track.getSegments();
 		for (int i = 0; i < maxSegments - 1; i++) {
 
 			g2.drawLine((int) segments.get(i).getX(), (int) segments.get(i).getY(), (int) segments.get(i + 1).getX(),

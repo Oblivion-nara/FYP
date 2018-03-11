@@ -14,6 +14,18 @@ public interface CarInterface extends Remote {
 
 	Point2D getTrackReturn() throws RemoteException;
 
+	Point getMouse() throws RemoteException;
+
+	boolean isMyTurn() throws RemoteException;
+
+	boolean isDrawMovement() throws RemoteException;
+
+	Point getVelocity() throws RemoteException;
+
+	int getMovement() throws RemoteException;
+
+	int getTrackSize() throws RemoteException;
+
 	boolean onTrack() throws RemoteException;
 
 	void setTrack(boolean onTrack) throws RemoteException;
@@ -22,6 +34,6 @@ public interface CarInterface extends Remote {
 
 	void setTrackReturn(Point trackReturn) throws RemoteException;
 
-	boolean update(Point offset) throws RemoteException;
+	boolean update(Point offset, Point mouse, boolean click) throws RemoteException;
 
 }

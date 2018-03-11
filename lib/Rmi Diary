@@ -1,4 +1,6 @@
 RMI Diary
 - setup interfaces for remote classes 30 mins
-
+- got ClassNotFoundException, resolved by starting rmiregistry in the bin folder
+- got UnmarshalException, resolved by adding throws RemoteException; to all methods in Remote interfaces
+- got ClassCastException, resolved by casting to the class interface rather than the class itself
  

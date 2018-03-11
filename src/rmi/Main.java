@@ -9,11 +9,10 @@ import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
-
-import main.Hello;
 
 public class Main extends JFrame {
 
@@ -28,6 +27,8 @@ public class Main extends JFrame {
 	private Graphics mainG;
 	private Image finalImage, offImage;
 	private GameInterface game;
+	private TrackInterface track;
+	private ArrayList<CarInterface> cars;
 
 	public static void main(String[] args) {
 		new Main().run();
@@ -60,15 +61,20 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		mainG = this.getGraphics();
-        try {
-            Registry registry = LocateRegistry.getRegistry(2001);
-            game = (GameInterface) registry.lookup("Game");
-        } catch (Exception e) {
-            e.printStackTrace();
+		try {
+			Registry registry = LocateRegistry.getRegistry(2001);
+			game = (GameInterface) registry.lookup("Game");
+			track = (TrackInterface) registry.lookup("Track");
+			cars = new ArrayList<>();
+			for (int i = 0; i < StaticVars.numPlayers + StaticVars.ais; i++) {
+				cars.add((CarInterface) registry.lookup("Car" + i));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			running = false;
-        }
-		
-}
+		}
+
+	}
 
 	public void loop() {
 
@@ -114,31 +120,36 @@ public class Main extends JFrame {
 			input.stopMouseWheel();
 		}
 
-        try {
-			game.update();
+		try {
+			game.update(input.getMouseZoomed(), input.isMouseDown(1));
+			input.artificialMouseReleased(1);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void draw() {
-		
 
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-//		game.draw(offg);
+		try {
+			Game.draw(offg, game, track, cars);
 
-		Point mouse = input.getMouseZoomed();
-		if (mouse != null) {
-			offg.setColor(Color.blue);
-			offg.fillRect(mouse.x, mouse.y, 2, 2);
+			Point mouse = input.getMouseZoomed();
+			if (mouse != null) {
+				offg.setColor(Color.blue);
+				offg.fillRect(mouse.x, mouse.y, 2, 2);
+			}
+
+			Graphics finalG = finalImage.getGraphics();
+			finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f),
+					(int) ((1 + zoom) * width), (int) ((1 + zoom) * width), null);
+			Game.drawui(finalG, game);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			running = false;
 		}
-
-		Graphics finalG = finalImage.getGraphics();
-		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
-				(int) ((1 + zoom) * width), null);
-//		game.drawui(finalG);
 		mainG.drawImage(finalImage, 0, 0, null);
 
 	}
