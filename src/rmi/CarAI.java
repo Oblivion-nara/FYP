@@ -29,7 +29,7 @@ public class CarAI extends Car implements CarAIInterface{
 		}
 		if (track.wins(location)) {
 			heu.setHeuristic(1.0);
-			System.out.println("winner");
+			System.out.println("CarAI.calculateHeuristic():32, winner");
 			return heu;
 		}
 		// calc distance along track

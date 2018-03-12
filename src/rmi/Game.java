@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public class Game implements GameInterface {
 
 	private ArrayList<Car> players;
-	private ArrayList<CarAI> aiPlayers;
 	private Point offset, prevOffset;
 	private Track track;
 	private boolean gameWon;

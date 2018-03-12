@@ -32,8 +32,8 @@ public class DrawCar {
 //		g2.fillRect((int) car.location.getX() - 5, (int) car.location.getY() - 5, 10, 10);
 //		g2.setColor(Color.black);
 //		g2.fillRect((int) car.trackReturn.getX() - 5, (int) car.trackReturn.getY() - 5, 10, 10);
-
 		if (car.myTurn) {
+			System.err.println("null car");
 			g2.setColor(Color.red);
 			g2.fillRect((int) (car.location.getX() + car.velocity.getX()) - 1, (int) (car.location.getY() + car.velocity.getY()) - 1, 2,
 					2);

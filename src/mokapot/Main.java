@@ -7,29 +7,30 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
+import rmi.CarInterface;
+import rmi.TrackInterface;
 import xyz.acygn.mokapot.CommunicationAddress;
 import xyz.acygn.mokapot.DistributedCommunicator;
-import xyz.acygn.mokapot.TCPCommunicationAddress;
 
 public class Main extends JFrame {
 
-	private static boolean running;
-	private static int FPS;
-
 	public static InputHandler input;
 	public static Random random;
-	public static int width, height;
+	public static int width = 1000, height = 1000;
 
+	private boolean running;
+	private int FPS;
 	private float zoom;
 	private Graphics mainG;
 	private Image finalImage, offImage;
-	public Game game;
-	private DrawGame drawGame;
+	private Game game;
+	private Track track;
+	private ArrayList<Car> cars;
 	private CommunicationAddress remoteAddress;
 
 	public static void main(String[] args) {
@@ -63,23 +64,23 @@ public class Main extends JFrame {
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		mainG = this.getGraphics();
-		
+
 		try {
-			remoteAddress = new SetupServer().setup();
-		} catch (IllegalStateException | IOException e) {
+			// remoteAddress =
+			// int players = 0, ais = 1, trackWidth = 40, trackLength = 40,
+			// trackSegLength = 80, aiDifficulty = 3;
+			SetupServer setup = new SetupServer();
+			game = setup.game();
+			track = game.getRemoteTrack();
+			cars = game.getRemoteCars();
+		} catch (Exception e) {
+			System.err.println("failed");
 			e.printStackTrace();
 			this.dispose();
 			System.exit(0);
 		}
 
-		int players = 0, ais = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 3;
-		game = new Game(players, ais, trackWidth, trackLength, trackSegLength, aiDifficulty, remoteAddress);
-		drawGame = new DrawGame(game);
-		// game = new Game(players, ais, trackWidth, trackLength,
-		// trackSegLength, aiDifficulty);
 	}
-	
-
 
 	public void loop() {
 
@@ -115,7 +116,7 @@ public class Main extends JFrame {
 			return;
 		}
 		if (input.isKeyDown(KeyEvent.VK_R)) {
-			game = new Game(1, 1, 40, 40, 40, 3,remoteAddress);
+			// game = new Game(1, 1, 40, 40, 40, 3,remoteAddress);
 			input.artificialKeyReleased(KeyEvent.VK_R);
 		}
 		double wheel = input.getMouseWheelMovement();
@@ -130,7 +131,8 @@ public class Main extends JFrame {
 			input.stopMouseWheel();
 		}
 
-		game.update();
+		game.update(input.getMouseZoomed(), input.isMouseDown(1));
+		input.artificialMouseReleased(1);
 
 	}
 
@@ -139,7 +141,7 @@ public class Main extends JFrame {
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-		drawGame.draw(offg);
+		Game.draw(offg, game,track,cars);
 
 		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
@@ -150,7 +152,7 @@ public class Main extends JFrame {
 		Graphics finalG = finalImage.getGraphics();
 		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
-		drawGame.drawui(finalG);
+		Game.drawui(finalG, game);
 		mainG.drawImage(finalImage, 0, 0, null);
 
 	}

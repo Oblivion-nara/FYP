@@ -20,7 +20,6 @@ public class DrawGame {
 		for (Car car : game.getPlayers()) {
 			drawCars.add(new DrawCar(car));
 		}
-		System.out.println(game.getTrack().getMaxSegments());
 	}
 
 	public void drawui(Graphics g) {
@@ -49,9 +48,7 @@ public class DrawGame {
 				-(int) (game.getInterpolation() * game.getOffset().y
 						+ (1 - game.getInterpolation()) * game.getPrevOffset().y));
 		drawTrack.draw(g);
-		for (DrawCar dcar : drawCars) {
-			dcar.draw(g);
-		}
+		drawCars.get(0).draw(g);
 
 		g.translate(game.getOffset().x, game.getOffset().y);
 	}

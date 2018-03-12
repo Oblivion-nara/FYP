@@ -1,6 +1,11 @@
 package mokapot;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,7 +29,7 @@ public class Track {
 
 	private void initTrack() {
 
-		Point current = new Point(Main.width / 2, Main.height / 2);
+		Point current = new Point(500,500);
 		float angle, direction = (float) (random.nextFloat() * Math.PI * 2); // 0*
 																				// is
 																				// right
@@ -167,5 +172,46 @@ public class Track {
 			return true;
 		}
 		return false;
+	}
+
+	public static void draw(Graphics g, Track track){
+
+		Graphics2D g2 = (Graphics2D) g;
+		Stroke defaultStroke = g2.getStroke();
+		int strokeSize = track.getTrackWidth();
+		Stroke stroke = new BasicStroke(strokeSize);
+		g2.setStroke(stroke);
+
+		g2.setColor(Color.lightGray);
+		int maxSegments = track.getMaxSegments();
+		ArrayList<Point> segments = track.getSegments();
+		if(segments == null){
+			System.out.println("Track.draw(), seg = null");
+		}
+		for (int i = 0; i < maxSegments - 1; i++) {
+
+			g2.drawLine((int) segments.get(i).getX(), (int) segments.get(i).getY(), (int) segments.get(i + 1).getX(),
+					(int) segments.get(i + 1).getY());
+
+		}
+		// draw finish
+		Point finish = segments.get(maxSegments - 1);
+		g2.setColor(Color.BLACK);
+		g2.drawLine(finish.x, finish.y, finish.x, finish.y);
+		g2.setColor(Color.white);
+		g2.setStroke(new BasicStroke(strokeSize / 4));
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if ((i + j) % 2 == 0) {
+					g2.drawLine(finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
+							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j),
+							finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
+							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j));
+				}
+			}
+
+		}
+		g2.setStroke(defaultStroke);
+
 	}
 }

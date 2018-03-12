@@ -2,7 +2,7 @@ package mokapot;
 
 import java.awt.Point;
 
-public class CarAI extends Car {
+public class CarAI extends Car{
 
 	public int level;
 	public Track track;
