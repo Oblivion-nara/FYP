@@ -6,4 +6,4 @@
 	Looked through some of the guide and realise that final/private objects cannot be returned by remote objects.
 	
 	
-	MILLR
+	changed the structure of mokapot, threaded the rendering methods, alowed multiple clients to connect at once
