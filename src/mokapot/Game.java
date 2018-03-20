@@ -151,6 +151,7 @@ public class Game {
 						track.getNearestTrackPoint(getPointOnTrack(10, offTrack, (Point) player.getTrackReturn())));
 				player.setTrack(false);
 			}
+			
 			playersTurn = (playersTurn + 1) % players.size();
 			try {
 				player = ((CarAI) players.get(playersTurn));
@@ -158,6 +159,7 @@ public class Game {
 				player = players.get(playersTurn);
 			}
 			player.go();
+			
 			prevOffset = offset;
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);

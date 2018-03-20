@@ -87,10 +87,10 @@ public class CarAI extends Car{
 		if (onTrack) {
 			trackReturn.setLocation(location);
 		}
-		PointHeuristic heu = checkSpaces(location, velocity, level);
-		this.location.setLocation(heu.getLocation());
-		this.velocity.setLocation(heu.getVelocity());
-		myTurn = false;
+//		PointHeuristic heu = checkSpaces(location, velocity, level);
+//		this.location.setLocation(heu.getLocation());
+//		this.velocity.setLocation(heu.getVelocity());
+//		myTurn = false; 
 		return true;
 	}
 

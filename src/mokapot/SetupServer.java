@@ -10,11 +10,12 @@ import xyz.acygn.mokapot.TCPCommunicationAddress;
 public class SetupServer {
 
 	private CommunicationAddress remoteAddress;
+	private DistributedCommunicator communicator;
 	private Game game;
 
 	public SetupServer() throws IllegalStateException, IOException {
 		// Start a communicator on this JVM listening on port 15239.
-		DistributedCommunicator communicator = new DistributedCommunicator(
+		communicator = new DistributedCommunicator(
 				TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15239));
 		communicator.startCommunication();
 		// Configure the address of the remote communicator.
@@ -26,6 +27,10 @@ public class SetupServer {
 		game = DistributedCommunicator.getCommunicator().runRemotely(
 				() -> new Game(players, trackWidth, trackLength, trackSegLength, ais, aiDifficulty), remoteAddress);
 
+	}
+	
+	public DistributedCommunicator getComms(){
+		return communicator;
 	}
 
 	public Game game() {
