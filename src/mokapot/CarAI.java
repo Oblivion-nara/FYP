@@ -2,7 +2,7 @@ package mokapot;
 
 import java.awt.Point;
 
-public class CarAI extends Car{
+public class CarAI extends Car {
 
 	public int level;
 	public Track track;
@@ -65,7 +65,7 @@ public class CarAI extends Car{
 				}
 				if (temp.getHeuristic() > heu.getHeuristic()) {
 					heu.setLocation(travel);
-					heu.setVelocity(velocity);
+					heu.setVelocity(new Point(velocity.x + x, velocity.y + y));
 					heu.setHeuristic(temp.getHeuristic());
 				}
 
@@ -87,10 +87,10 @@ public class CarAI extends Car{
 		if (onTrack) {
 			trackReturn.setLocation(location);
 		}
-//		PointHeuristic heu = checkSpaces(location, velocity, level);
-//		this.location.setLocation(heu.getLocation());
-//		this.velocity.setLocation(heu.getVelocity());
-//		myTurn = false; 
+		// PointHeuristic heu = checkSpaces(location, velocity, level);
+		// this.location.setLocation(heu.getLocation());
+		// this.velocity.setLocation(heu.getVelocity());
+		// myTurn = false;
 		return true;
 	}
 

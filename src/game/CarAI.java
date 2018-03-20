@@ -2,27 +2,45 @@ package game;
 
 import java.awt.Color;
 import java.awt.Point;
-
-import rmi.CarAIInterface;
+import java.util.ArrayList;
 
 public class CarAI extends Car{
 
 	private int level;
 	private Track track;
 	private long moveTime;
+	private ArrayList<PointHeuristic> moves;
 
 	public CarAI(Point start, Color color, Track track, int level) {
 		super(start, color, track.getTrackWidth());
 		this.track = track;
 		this.level = level;
+		
+		moves = new ASearch(track, movement).getMoves();
 	}
 
 	public void go() {
 		myTurn = true;
 		moveTime = System.currentTimeMillis() + 500;
 	}
+	
+	public boolean update(Point offset){
+		if (System.currentTimeMillis() < moveTime) {
+			return false;
+		}
+		if (onTrack) {
+			trackReturn.setLocation(location);
+		}
 
-	public PointHeuristic calculateHeuristic(Point location, Point velocity) {
+		PointHeuristic move = moves.remove(0);
+		location = move.getLocation();
+		velocity = move.getVelocity();
+		
+		myTurn = false;
+		return true;
+	}
+
+	/*public PointHeuristic calculateHeuristic(Point location, Point velocity) {
 		PointHeuristic heu = new PointHeuristic(location, velocity, -1);
 		if (!track.onTrack(location)) {
 			return new PointHeuristic(location, velocity, 0);
@@ -96,6 +114,6 @@ public class CarAI extends Car{
 		this.velocity.setLocation(heu.getVelocity());
 		myTurn = false;
 		return true;
-	}
+	}*/
 
 }

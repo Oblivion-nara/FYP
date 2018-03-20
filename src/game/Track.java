@@ -164,6 +164,29 @@ public class Track {
 		}
 		return false;
 	}
+	public Point checkMove(Point loc, Point previous) {
+		return checkMove(10, loc, previous);
+	}
+	private Point checkMove(int iterations, Point loc, Point previous) {
+		if (iterations <= 0) {
+			return null;
+		}
+
+		Point mid = new Point((int) (loc.getX() + previous.getX()) / 2, (int) (loc.getY() + previous.getY()) / 2);
+		if (!onTrack(mid)) {
+			return mid;
+		}
+		Point temp = checkMove(iterations - 1, loc, mid);
+		if (temp != null) {
+			return temp;
+		}
+		temp = checkMove(iterations - 1, mid, loc);
+		if (temp != null) {
+			return temp;
+		}
+		return null;
+
+	}
 
 	public void draw(Graphics g) {
 
