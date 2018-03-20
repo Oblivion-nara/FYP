@@ -20,11 +20,12 @@ public class SetupServer {
 		// Configure the address of the remote communicator.
 		remoteAddress = TCPCommunicationAddress.fromInetAddress(InetAddress.getLoopbackAddress(), 15238);
 
-		int players = 0, ais = 1, aiDifficulty = 3;
+		int players = 0, ais = 2, aiDifficulty = 3;
 		int trackWidth = 40, trackLength = 40, trackSegLength = 80;
 
 		game = DistributedCommunicator.getCommunicator().runRemotely(
 				() -> new Game(players, trackWidth, trackLength, trackSegLength, ais, aiDifficulty), remoteAddress);
+		
 
 	}
 

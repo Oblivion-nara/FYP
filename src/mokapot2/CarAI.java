@@ -1,12 +1,14 @@
 package mokapot2;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class CarAI extends Car{
 
 	public int level;
 	public Track track;
 	public long moveTime;
+	private ArrayList<PointHeuristic> moves;
 
 	public CarAI(Point start, Track track, int level) {
 		super(start, track.getTrackWidth());
