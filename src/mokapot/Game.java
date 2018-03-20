@@ -153,6 +153,7 @@ public class Game {
 			}
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
+			
 			prevOffset = offset;
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);

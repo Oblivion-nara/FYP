@@ -6,14 +6,11 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
-import rmi.CarInterface;
-import rmi.TrackInterface;
 import xyz.acygn.mokapot.CommunicationAddress;
 import xyz.acygn.mokapot.DistributedCommunicator;
 
@@ -31,7 +28,7 @@ public class Main extends JFrame {
 	private Game game;
 	private Track track;
 	private ArrayList<Car> cars;
-	private CommunicationAddress remoteAddress;
+	private CommunicationAddress remoteAddress, clientAddress;
 
 	public static void main(String[] args) {
 		new Main().run();
@@ -70,6 +67,7 @@ public class Main extends JFrame {
 			// int players = 0, ais = 1, trackWidth = 40, trackLength = 40,
 			// trackSegLength = 80, aiDifficulty = 3;
 			SetupServer setup = new SetupServer();
+//			clientAddress = setup.getComms().getMyAddress();
 			game = setup.game();
 			track = game.getRemoteTrack();
 			cars = game.getRemoteCars();
@@ -79,7 +77,7 @@ public class Main extends JFrame {
 			this.dispose();
 			System.exit(0);
 		}
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 	}
 
 	public void loop() {
@@ -132,6 +130,9 @@ public class Main extends JFrame {
 		}
 
 		game.update(input.getMouseZoomed(), input.isMouseDown(1));
+		
+		
+		
 		input.artificialMouseReleased(1);
 
 	}
@@ -141,6 +142,8 @@ public class Main extends JFrame {
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
+//		DistributedCommunicator.getCommunicator().runRemotely(
+//				() -> Game.draw(offg, game,track,cars), clientAddress);
 		Game.draw(offg, game,track,cars);
 
 		Point mouse = input.getMouseZoomed();
@@ -152,6 +155,8 @@ public class Main extends JFrame {
 		Graphics finalG = finalImage.getGraphics();
 		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
+//		DistributedCommunicator.getCommunicator().runRemotely(
+//				() -> Game.drawui(finalG, game), clientAddress);
 		Game.drawui(finalG, game);
 		mainG.drawImage(finalImage, 0, 0, null);
 
