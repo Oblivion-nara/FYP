@@ -107,12 +107,13 @@ public class Car{
 		// g2.fillRect((int) trackReturn.getX() - 5, (int)
 		// trackReturn.getY() - 5, 10, 10);
 
+		System.out.println("Car.draw(), "+car.myTurn);
 		if (car.myTurn) {
 			g2.setColor(Color.red);
 			Point velocity = car.velocity;
 			Point mouse = car.mouse;
 			int movement = car.movement;
-
+			System.out.println(velocity);
 			g2.fillRect((int) (location.getX() + velocity.getX()) - 1, (int) (location.getY() + velocity.getY()) - 1, 2,
 					2);
 			g2.drawOval((int) (location.getX() + velocity.getX() - movement),

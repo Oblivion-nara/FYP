@@ -152,7 +152,12 @@ public class Game {
 				player.setTrack(false);
 			}
 			playersTurn = (playersTurn + 1) % players.size();
-			players.get(playersTurn).go();
+			try {
+				player = ((CarAI) players.get(playersTurn));
+			} catch (ClassCastException e) {
+				player = players.get(playersTurn);
+			}
+			player.go();
 			prevOffset = offset;
 			offset = new Point((Point) players.get(playersTurn).getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);

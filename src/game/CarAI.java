@@ -35,7 +35,7 @@ public class CarAI extends Car{
 		// calc distance along track
 		heu.setHeuristic(track.getDistanceAlong(location));
 		if (heu.getHeuristic() < 0)
-			System.out.println("CarAI.calculateHeuristic(), ERROR negativ heuristic");
+			System.out.println("CarAI.calculateHeuristic(), ERROR negative heuristic");
 		return heu;
 	}
 
