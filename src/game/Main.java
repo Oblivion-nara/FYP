@@ -56,7 +56,7 @@ public class Main extends JFrame {
 		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		mainG = this.getGraphics();
 
-		int players = 0, ais = 1, trackWidth = 40, trackLength = 40, trackSegLength = 80, aiDifficulty = 1;
+		int players = 1, ais = 2, trackWidth = 40, trackLength = 20, trackSegLength = 80, aiDifficulty = 1;
 		game = new Game(players, ais, trackWidth, trackLength, trackSegLength, aiDifficulty);
 	}
 

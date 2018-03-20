@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game {
 
@@ -14,11 +15,11 @@ public class Game {
 	private Track track;
 	private boolean gameWon;
 	private float interpolation = 1f;
-	private long seed = 1000l;
+	private long seed = 6189494l;
 	private int playersTurn;
 
 	public Game(int players, int ais, int trackWidth, int trackLength, int trackSegLength, int aiDifficulty) {
-
+		seed = new Random().nextLong();
 		gameWon = false;
 		track = new Track(seed, trackWidth, trackLength, trackSegLength);
 		Point start = track.getStart();
@@ -88,7 +89,14 @@ public class Game {
 			playersTurn = (playersTurn + 1) % players.size();
 			players.get(playersTurn).go();
 			prevOffset = offset;
-			offset = new Point((Point) players.get(playersTurn).getLocation());
+			Car winning = players.get(0);
+			for (Car car : players) {
+				if (track.getDistanceAlong((Point) car.getLocation()) > track
+						.getDistanceAlong((Point) winning.getLocation())) {
+					winning = car;
+				}
+			}
+			offset = new Point((Point) winning.getLocation());
 			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);
 			interpolation = 0f;
 		}
@@ -130,20 +138,26 @@ public class Game {
 		track.draw(g);
 		players.forEach(x -> x.draw(g));
 		// will show all the points on the track
-//		for (int x = offset.x; x < Main.width-offset.x; x += 5) {
-//			for (int y = offset.y; y < Main.height-offset.y; y += 5) {
-//				if (track.onTrack(new Point(x, y))) {
-//					PointHeuristic heu = ((CarAI)players.get(playersTurn)).calculateHeuristic(new Point(x, y), new Point (0,0));
-////					double heu = track.getDistanceAlong(new Point(x,y));
-//					g.setColor(new Color(0f,(float)heu.getHeuristic(),(float)heu.getHeuristic()));
-//					g.drawRect(x, y, 1, 1);
-//				} else {
-//					PointHeuristic heu = ((CarAI)players.get(playersTurn)).offTrackHeuristic(new Point(x, y), new Point (0,0));
-//					g.setColor(new Color((float)heu.getHeuristic(),(float)heu.getHeuristic(),(float)heu.getHeuristic()));
-//					g.drawRect(x, y, 1, 1);
-//				}
-//			}
-//		}
+		// for (int x = offset.x; x < Main.width-offset.x; x += 5) {
+		// for (int y = offset.y; y < Main.height-offset.y; y += 5) {
+		// if (track.onTrack(new Point(x, y))) {
+		// PointHeuristic heu =
+		// ((CarAI)players.get(playersTurn)).calculateHeuristic(new Point(x, y),
+		// new Point (0,0));
+		//// double heu = track.getDistanceAlong(new Point(x,y));
+		// g.setColor(new
+		// Color(0f,(float)heu.getHeuristic(),(float)heu.getHeuristic()));
+		// g.drawRect(x, y, 1, 1);
+		// } else {
+		// PointHeuristic heu =
+		// ((CarAI)players.get(playersTurn)).offTrackHeuristic(new Point(x, y),
+		// new Point (0,0));
+		// g.setColor(new
+		// Color((float)heu.getHeuristic(),(float)heu.getHeuristic(),(float)heu.getHeuristic()));
+		// g.drawRect(x, y, 1, 1);
+		// }
+		// }
+		// }
 
 		g.translate(offset.x, offset.y);
 	}

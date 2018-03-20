@@ -21,7 +21,7 @@ public class CarAI extends Car{
 
 	public void go() {
 		myTurn = true;
-		moveTime = System.currentTimeMillis() + 500;
+		moveTime = System.currentTimeMillis() + 300;
 	}
 	
 	public boolean update(Point offset){
