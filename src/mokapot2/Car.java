@@ -19,7 +19,7 @@ public class Car{
 	public Point location, velocity, trackReturn;
 	public int movement = 40, trackSize;
 
-	public Car(Point start, int trackSize) {
+	public Car(Point start, Color color, int trackSize) {
 		location = new Point(start);
 		trackReturn = new Point(start);
 		this.trackSize = trackSize;
@@ -27,7 +27,7 @@ public class Car{
 		drawMovement = false;
 		onTrack = true;
 		velocity = new Point(0, 0);
-		color = new Color(200, 150, 50);
+		this.color = color;
 	}
 
 	public Point2D getLocation() {
@@ -111,7 +111,7 @@ public class Car{
 
 	}
 
-	public static void draw(Graphics g, Car car) {
+	public void draw(Graphics g, Car car) {
 
 		Graphics2D g2 = (Graphics2D) g;
 

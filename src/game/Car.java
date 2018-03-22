@@ -109,7 +109,7 @@ public class Car {
 					2);
 			g2.drawOval((int) (location.getX() + velocity.getX() - movement),
 					(int) (location.getY() + velocity.getY() - movement), movement * 2, movement * 2);
-			if (drawMovement) {
+			if (drawMovement && mouse != null) {
 				g2.setColor(Color.WHITE);
 				g2.drawLine((int) location.getX(), (int) location.getY(), mouse.x, mouse.y);
 			}

@@ -6,8 +6,10 @@ grant {
     permission java.util.PropertyPermission "java.runtime.version", "read";
     permission java.util.PropertyPermission "java.vm.info", "read";
     permission java.util.PropertyPermission "com.google.appengine.runtime.version", "read";
-    permission java.lang.RuntimePermission "accessClassInPackage.sun.misc";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.*";
     permission java.lang.RuntimePermission "accessClassInPackage.sun.reflect";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.java2d";
+    permission java.lang.RuntimePermission "accessClassInPackage.sun.java2d.*";
     permission java.lang.RuntimePermission "accessClassInPackage.sun.nio.ch";
     permission java.lang.RuntimePermission "accessClassInPackage.sun.awt.image";
     permission java.lang.RuntimePermission "modifyThreadGroup";

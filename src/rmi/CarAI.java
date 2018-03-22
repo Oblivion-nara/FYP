@@ -3,7 +3,7 @@ package rmi;
 import java.awt.Color;
 import java.awt.Point;
 
-import game.PointHeuristic;
+import mokapot.PointHeuristic;
 
 public class CarAI extends Car implements CarAIInterface{
 

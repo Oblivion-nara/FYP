@@ -29,7 +29,7 @@ public class Track {
 
 	private void initTrack() {
 
-		Point current = new Point(500,500);
+		Point current = new Point(500, 500);
 		float angle, direction = (float) (random.nextFloat() * Math.PI * 2); // 0*
 																				// is
 																				// right
@@ -55,7 +55,7 @@ public class Track {
 		}
 
 	}
-	
+
 	public ArrayList<Point> getSegments() {
 		return segments;
 	}
@@ -98,7 +98,7 @@ public class Track {
 
 	public Point getNearestTrackPoint(Point loc) {
 
-		Point ret = (Point)loc.clone();
+		Point ret = (Point) loc.clone();
 		for (int i = 0; i < maxSegments - 1; i++) {
 			Point seg = segments.get(i);
 			Point next = segments.get(i + 1);
@@ -174,7 +174,32 @@ public class Track {
 		return false;
 	}
 
-	public static void draw(Graphics g, Track track){
+	public Point checkMove(Point loc, Point previous) {
+		return checkMove(10, loc, previous);
+	}
+
+	private Point checkMove(int iterations, Point loc, Point previous) {
+		if (iterations <= 0) {
+			return null;
+		}
+
+		Point mid = new Point((int) (loc.getX() + previous.getX()) / 2, (int) (loc.getY() + previous.getY()) / 2);
+		if (!onTrack(mid)) {
+			return mid;
+		}
+		Point temp = checkMove(iterations - 1, loc, mid);
+		if (temp != null) {
+			return temp;
+		}
+		temp = checkMove(iterations - 1, mid, loc);
+		if (temp != null) {
+			return temp;
+		}
+		return null;
+
+	}
+
+	public void draw(Graphics g, Track track) {
 
 		Graphics2D g2 = (Graphics2D) g;
 		Stroke defaultStroke = g2.getStroke();
@@ -185,7 +210,7 @@ public class Track {
 		g2.setColor(Color.lightGray);
 		int maxSegments = track.getMaxSegments();
 		ArrayList<Point> segments = track.getSegments();
-		if(segments == null){
+		if (segments == null) {
 			System.out.println("Track.draw(), seg = null");
 		}
 		for (int i = 0; i < maxSegments - 1; i++) {
@@ -195,22 +220,22 @@ public class Track {
 
 		}
 		// draw finish
-//		Point finish = segments.get(maxSegments - 1);
-//		g2.setColor(Color.BLACK);
-//		g2.drawLine(finish.x, finish.y, finish.x, finish.y);
-//		g2.setColor(Color.white);
-//		g2.setStroke(new BasicStroke(strokeSize / 4));
-//		for (int i = 0; i < 4; i++) {
-//			for (int j = 0; j < 4; j++) {
-//				if ((i + j) % 2 == 0) {
-//					g2.drawLine(finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
-//							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j),
-//							finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
-//							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j));
-//				}
-//			}
-//
-//		}
+		Point finish = segments.get(maxSegments - 1);
+		g2.setColor(Color.BLACK);
+		g2.drawLine(finish.x, finish.y, finish.x, finish.y);
+		g2.setColor(Color.white);
+		g2.setStroke(new BasicStroke(strokeSize / 4));
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if ((i + j) % 2 == 0) {
+					g2.drawLine(finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
+							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j),
+							finish.x - (strokeSize / 8 * 3) + (strokeSize / 4 * i),
+							finish.y - (strokeSize / 8 * 3) + (strokeSize / 4 * j));
+				}
+			}
+
+		}
 		g2.setStroke(defaultStroke);
 
 	}

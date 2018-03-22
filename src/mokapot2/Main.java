@@ -1,6 +1,7 @@
 package mokapot2;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -56,11 +57,15 @@ public class Main extends JFrame implements Runnable {
 		this.setVisible(true);
 
 		width = this.getWidth();
+		
 		height = this.getHeight();
 
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		finalImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		mainG = this.getGraphics();
+
+		Font font = new Font("Verdana", Font.BOLD, 40);
+		finalImage.getGraphics().setFont(font);
 
 		try {
 			// remoteAddress =
@@ -146,7 +151,7 @@ public class Main extends JFrame implements Runnable {
 		Graphics offg = offImage.getGraphics();
 		offg.setColor(Color.gray);
 		offg.fillRect(0, 0, width, height);
-		Game.draw(offg, game, track, cars);
+		game.draw(offg.create(), track, cars);
 
 		Point mouse = input.getMouseZoomed();
 		if (mouse != null) {
@@ -157,7 +162,7 @@ public class Main extends JFrame implements Runnable {
 		Graphics finalG = finalImage.getGraphics();
 		finalG.drawImage(offImage, -(int) (zoom * width / 2f), -(int) (zoom * height / 2f), (int) ((1 + zoom) * width),
 				(int) ((1 + zoom) * width), null);
-		Game.drawui(finalG, game);
+		game.drawui(finalG);
 		mainG.drawImage(finalImage, 0, 0, null);
 
 	}

@@ -1,14 +1,14 @@
 package mokapot2;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
-
+import java.util.Random;
+import xyz.acygn.mokapot.CommunicationAddress;
+import xyz.acygn.mokapot.DistributedCommunicator;
 import xyz.acygn.mokapot.DistributionUtils;
-
 
 public class Game {
 
@@ -19,29 +19,35 @@ public class Game {
 	public float interpolation = 1f;
 	public long seed = 1000l;
 	public int playersTurn;
+	private CommunicationAddress clientAddress;
 
-	public Game(int players, int trackWidth, int maxSegments, int segLength, int ais, int aiDifficulty) {
-		
+	public Game(int players, int trackWidth, int maxSegments, int segLength, int ais, int aiDifficulty,
+			CommunicationAddress clientAddress) {
+
 		track = new Track(seed, trackWidth, maxSegments, segLength);
 		gameWon = false;
 		playersTurn = 0;
 		Point start = track.getStart();
+		Random rand = new Random();
 		this.players = new ArrayList<>();
 		for (int i = 0; i < players; i++) {
-			this.players.add(new Car(start, track.getTrackWidth()));
+			this.players.add(new Car(start, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)),
+					track.getTrackWidth()));
 		}
 		for (int i = 0; i < ais; i++) {
-			this.players.add(new CarAI(start, track, aiDifficulty));
+			this.players.add(new CarAI(start, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)), track,
+					aiDifficulty));
 		}
 		this.players.get(0).go();
 		offset = prevOffset = new Point(0, 0);
+		this.clientAddress = clientAddress;
 	}
-	
-	public Track getRemoteTrack(){
+
+	public Track getRemoteTrack() {
 		return DistributionUtils.makeLongReference(track);
 	}
-	
-	public ArrayList<Car> getRemoteCars(){
+
+	public ArrayList<Car> getRemoteCars() {
 		return DistributionUtils.makeLongReference(players);
 	}
 
@@ -92,46 +98,25 @@ public class Game {
 
 	}
 
-	private Point checkMove(int iterations, Point loc, Point previous) {
-		if (iterations <= 0) {
-			return null;
-		}
-
-		Point mid = new Point((int) (loc.getX() + previous.getX()) / 2, (int) (loc.getY() + previous.getY()) / 2);
-		if (!track.onTrack(mid)) {
-			return mid;
-		}
-		Point temp = checkMove(iterations - 1, loc, mid);
-		if (temp != null) {
-			return temp;
-		}
-		temp = checkMove(iterations - 1, mid, loc);
-		if (temp != null) {
-			return temp;
-		}
-		return null;
-
-	}
-
 	public void update(Point mouse, boolean click) {
 		if (gameWon) {
 			return;
 		}
 
 		boolean next = false;
-		if(players.get(playersTurn) == null){
+		if (players.get(playersTurn) == null) {
 			System.out.println("Game.update() NULL");
 		}
 		try {
 			next = ((CarAI) players.get(playersTurn)).update(offset);
 		} catch (ClassCastException e) {
-			next = players.get(playersTurn).update(offset,mouse,click);
+			next = players.get(playersTurn).update(offset, mouse, click);
 		}
-		
+
 		if (next) {
 			Car player = players.get(playersTurn);
 			Point loc = (Point) player.getLocation();
-			Point offTrack = checkMove(5, (Point) loc, (Point) player.getTrackReturn());
+			Point offTrack = track.checkMove((Point) loc, (Point) player.getTrackReturn());
 			boolean onTrack = player.onTrack();
 
 			if (onTrack && !track.onTrack(loc)) {
@@ -159,8 +144,15 @@ public class Game {
 			}
 			player.go();
 			prevOffset = offset;
-			offset = new Point((Point) players.get(playersTurn).getLocation());
-			offset.move(offset.x - track.getStart().x, offset.y - track.getStart().y);
+			int winning = 0;
+			for (int i = 0; i < players.size();i++) {
+				if (track.getDistanceAlong((Point) players.get(i).getLocation()) > track
+						.getDistanceAlong((Point) players.get(winning).getLocation())) {
+					winning = i;
+				}
+			}
+			offset = new Point((Point) players.get(winning).getLocation());
+			offset.translate(- track.getStart().x, - track.getStart().y);
 			interpolation = 0f;
 		}
 
@@ -176,38 +168,45 @@ public class Game {
 
 	}
 
-	public static void drawui(Graphics g, Game game) {
+	public void drawui(Graphics g) {
 
 		// tells the players whos turn it is
-		Font font = new Font("Verdana", Font.BOLD, 40);
-		g.setFont(font);
-		g.setColor(Color.black);
-		FontMetrics met = g.getFontMetrics();
-		int playersTurn = game.getPlayersTurn();
+		DistributedCommunicator.getCommunicator().runRemotely(() -> g.setColor(Color.black), clientAddress);
+		int playersTurn = getPlayersTurn();
 		String turn = "Players turn:  " + (playersTurn + 1);
-		int width = met.stringWidth(turn);
-		g.drawString(turn, 50, 100);
+		DistributedCommunicator.getCommunicator().runRemotely(() -> g.drawString(turn, 50, 100), clientAddress);
+
 		// tells the players whos won
-		if (game.isGameWon()) {
+		if (isGameWon()) {
 			String winner = "The winner is: Player " + (playersTurn + 1);
-			width = met.stringWidth(winner);
-			g.drawString(winner, (Main.width - width) / 2, 300);
+			// width = met.stringWidth(winner);
+			FontMetrics met = DistributedCommunicator.getCommunicator().runRemotely(() -> g.getFontMetrics(),
+					clientAddress);
+			DistributedCommunicator.getCommunicator()
+					.runRemotely(() -> g.drawString(winner, (1000 - met.stringWidth(winner)) / 2, 300), clientAddress);
+
 		}
 	}
 
-	public static void draw(Graphics g, Game game, Track track, ArrayList<Car> cars) {
+	public void draw(Graphics g, Track track, ArrayList<Car> cars) {
 
-		float interpolation = game.getInterpolation();
-		double offsetX = game.getOffset().getX();
-		double offsetY = game.getOffset().getY();
-		double prevOffsetX = game.getPrevOffset().getX();
-		double prevOffsetY = game.getPrevOffset().getY();
-		g.translate(-(int) (interpolation * offsetX + (1 - interpolation) * prevOffsetX),
-				-(int) (interpolation * offsetY + (1 - interpolation) * prevOffsetY));
-		Track.draw(g, track);
-		for(Car car : cars){
-			Car.draw(g, car);
+		Point offset = new Point(getOffset());
+//		Point prevOffset = new Point(getPrevOffset());
+		DistributedCommunicator.getCommunicator().runRemotely(
+				() -> g.translate(-(int) ( offset.getX()),
+						-(int) ( offset.getY())),
+				clientAddress);
+		DistributedCommunicator.getCommunicator().runRemotely(() -> track.draw(g, track), clientAddress);
+		for (Car car : cars) {
+			DistributedCommunicator.getCommunicator().runRemotely(() -> car.draw(g, car), clientAddress);
 		}
+		// g.translate(-(int) (interpolation * offsetX + (1 - interpolation) *
+		// prevOffsetX),
+		// -(int) (interpolation * offsetY + (1 - interpolation) *
+		// prevOffsetY));
+		// Track.draw(g, track);
+		// Car.draw(g, car);
+
 		// will show all the points on the track
 		// for (int x = offset.x; x < Main.width-offset.x; x += 5) {
 		// for (int y = offset.y; y < Main.height-offset.y; y += 5) {
@@ -230,7 +229,9 @@ public class Game {
 		// }
 		// }
 
-		g.translate((int)offsetX, (int)offsetY);
+		DistributedCommunicator.getCommunicator()
+				.runRemotely(() -> g.translate((int) offset.getX(), (int) offset.getY()), clientAddress);
+//		 g.translate((int) offsetX, (int) offsetY);
 	}
 
 }
