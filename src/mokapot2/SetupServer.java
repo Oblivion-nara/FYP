@@ -3,6 +3,7 @@ package mokapot2;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import game.StaticVars;
 import xyz.acygn.mokapot.CommunicationAddress;
 import xyz.acygn.mokapot.DistributedCommunicator;
 import xyz.acygn.mokapot.TCPCommunicationAddress;
@@ -24,7 +25,7 @@ public class SetupServer {
 		int trackWidth = 40, trackLength = 20, trackSegLength = 80;
 
 		game = DistributedCommunicator.getCommunicator().runRemotely(
-				() -> new Game(players, trackWidth, trackLength, trackSegLength, ais, aiDifficulty,communicator.getMyAddress()), remoteAddress);
+				() -> new Game(StaticVars.numPlayers, StaticVars.trackWidth, StaticVars.trackLength, StaticVars.trackSegLength, StaticVars.ais, StaticVars.aiDifficulty,communicator.getMyAddress()), remoteAddress);
 		
 
 	}

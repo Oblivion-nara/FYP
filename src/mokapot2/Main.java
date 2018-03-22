@@ -20,7 +20,7 @@ public class Main extends JFrame implements Runnable {
 	public static Random random;
 	public static int width = 1000, height = 1000;
 
-	private boolean running;
+	private boolean running, start;
 	private int FPS;
 	private float zoom;
 	private Graphics mainG;
@@ -42,6 +42,7 @@ public class Main extends JFrame implements Runnable {
 
 	public void init() {
 		running = true;
+		start = false;
 		input = new InputHandler(this);
 		random = new Random();
 		FPS = 60;
@@ -57,7 +58,7 @@ public class Main extends JFrame implements Runnable {
 		this.setVisible(true);
 
 		width = this.getWidth();
-		
+
 		height = this.getHeight();
 
 		offImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -89,6 +90,12 @@ public class Main extends JFrame implements Runnable {
 	public void loop() {
 
 		drawThread.start();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		while (running) {
 			update();
 		}

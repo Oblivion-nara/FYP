@@ -14,6 +14,8 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import game.StaticVars;
+
 public class Main extends JFrame {
 
 	private static boolean running;

@@ -8,6 +8,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Random;
 
+import game.StaticVars;
+
 public class Server {
         
     public static void main(String args[]) {

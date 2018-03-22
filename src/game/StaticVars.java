@@ -1,4 +1,4 @@
-package rmi;
+package game;
 
 public class StaticVars {
 
