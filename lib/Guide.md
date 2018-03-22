@@ -1,6 +1,8 @@
 Using Mokapot
 =============
 
+VM args for the security policy -Djava.security.manager -Djava.security.policy=lib/security.policy
+
 Basic example (client)
 ----------------------
 
