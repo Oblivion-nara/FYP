@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import game.Car;
+import game.Track;
+
 public class CarAI extends Car{
 
 	private int level;

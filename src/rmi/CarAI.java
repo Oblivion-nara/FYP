@@ -2,40 +2,58 @@ package rmi;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 
-import mokapot.PointHeuristic;
-
-public class CarAI extends Car implements CarAIInterface{
+public class CarAI extends Car{
 
 	private int level;
 	private Track track;
 	private long moveTime;
+	private ArrayList<PointHeuristic> moves;
 
 	public CarAI(Point start, Color color, Track track, int level) {
 		super(start, color, track.getTrackWidth());
 		this.track = track;
 		this.level = level;
+		
+		moves = new ASearch(track, movement).getMoves();
 	}
 
 	public void go() {
 		myTurn = true;
-		moveTime = System.currentTimeMillis() + 500;
+		moveTime = System.currentTimeMillis() + 300;
+	}
+	
+	public boolean update(Point offset){
+		if (System.currentTimeMillis() < moveTime) {
+			return false;
+		}
+		if (onTrack) {
+			trackReturn.setLocation(location);
+		}
+
+		PointHeuristic move = moves.remove(0);
+		location = move.getLocation();
+		velocity = move.getVelocity();
+		
+		myTurn = false;
+		return true;
 	}
 
-	public PointHeuristic calculateHeuristic(Point location, Point velocity) {
+	/*public PointHeuristic calculateHeuristic(Point location, Point velocity) {
 		PointHeuristic heu = new PointHeuristic(location, velocity, -1);
 		if (!track.onTrack(location)) {
 			return new PointHeuristic(location, velocity, 0);
 		}
 		if (track.wins(location)) {
 			heu.setHeuristic(1.0);
-			System.out.println("CarAI.calculateHeuristic():32, winner");
+			System.out.println("winner");
 			return heu;
 		}
 		// calc distance along track
 		heu.setHeuristic(track.getDistanceAlong(location));
 		if (heu.getHeuristic() < 0)
-			System.out.println("CarAI.calculateHeuristic(), ERROR negativ heuristic");
+			System.out.println("CarAI.calculateHeuristic(), ERROR negative heuristic");
 		return heu;
 	}
 
@@ -96,6 +114,6 @@ public class CarAI extends Car implements CarAIInterface{
 		this.velocity.setLocation(heu.getVelocity());
 		myTurn = false;
 		return true;
-	}
+	}*/
 
 }

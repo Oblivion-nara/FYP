@@ -1,4 +1,4 @@
-package game;
+package rmi;
 
 import java.awt.Point;
 import java.util.ArrayList;

@@ -65,27 +65,6 @@ public class Game implements GameInterface {
 
 	}
 
-	private Point checkMove(int iterations, Point loc, Point previous) {
-		if (iterations <= 0) {
-			return null;
-		}
-
-		Point mid = new Point((int) (loc.getX() + previous.getX()) / 2, (int) (loc.getY() + previous.getY()) / 2);
-		if (!track.onTrack(mid)) {
-			return mid;
-		}
-		Point temp = checkMove(iterations - 1, loc, mid);
-		if (temp != null) {
-			return temp;
-		}
-		temp = checkMove(iterations - 1, mid, loc);
-		if (temp != null) {
-			return temp;
-		}
-		return null;
-
-	}
-
 	public void update(Point mouse, boolean click) {
 		if (gameWon) {
 			return;
@@ -100,7 +79,7 @@ public class Game implements GameInterface {
 		if (next) {
 			Car player = players.get(playersTurn);
 			Point loc = (Point) player.getLocation();
-			Point offTrack = checkMove(5, (Point) loc, (Point) player.getTrackReturn());
+			Point offTrack = track.checkMove((Point) loc, (Point) player.getTrackReturn());
 			boolean onTrack = player.onTrack();
 
 			if (onTrack && !track.onTrack(loc)) {
