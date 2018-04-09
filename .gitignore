@@ -1,4 +1,4 @@
-/bin/.*
+/bin/*
 /lib/assets
 /lib/doc
 /lib/examples
