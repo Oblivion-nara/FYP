@@ -20,6 +20,7 @@ public class Server {
     		Track track = new Track(new Random().nextLong(), StaticVars.trackWidth, StaticVars.trackLength, StaticVars.trackSegLength);
     		Point start = track.getStart();
     		CarInterface remCar;
+    		
     		ArrayList<Car> players = new ArrayList<>();
     		for (int i = 0; i < StaticVars.numPlayers; i++) {
     			Car car = new Car(start,

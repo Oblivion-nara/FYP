@@ -109,7 +109,7 @@ public class Game {
 		// Main.input.artificialKeyReleased(KeyEvent.VK_W);
 		// }
 		if (interpolation < 1) {
-			interpolation += 0.1f;
+			interpolation += 0.04f;
 		}
 
 	}

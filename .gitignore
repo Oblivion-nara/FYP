@@ -1,1 +1,8 @@
 /bin/
+*
+lib/assets
+lib/doc
+lib/examples
+lib/Mokapot Diary
+lib/Rmi Diary
+lib/README
